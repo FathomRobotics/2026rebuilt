@@ -4,11 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
+
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -19,7 +24,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
+    var driveState = m_robotContainer.drivetrain.getState();
+    double headingDeg = driveState.Pose.getRotation().getDegrees();
+    double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
   }
 
   @Override
