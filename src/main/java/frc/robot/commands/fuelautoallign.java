@@ -1,66 +1,68 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+//will do later
 
-package frc.robot.commands;
+// // Copyright (c) FIRST and other WPILib contributors.
+// // Open Source Software; you can modify and/or share it under the terms of
+// // the WPILib BSD license file in the root directory of this project.
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.vision.Limelight;
+// package frc.robot.commands;
 
-public class fuelautoallign extends Command {
-  private final CommandSwerveDrivetrain drivetrain;
-  private final Limelight limelight;
-  private final PIDController turnController;
+// import com.ctre.phoenix6.swerve.SwerveRequest;
+// import edu.wpi.first.math.controller.PIDController;
+// import edu.wpi.first.math.kinematics.ChassisSpeeds;
+// import edu.wpi.first.wpilibj2.command.Command;
+// import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+// import frc.robot.subsystems.vision.Limelight;
 
-  private final double maxAngularSpeed = 3.0; 
+// public class fuelautoallign extends Command {
+//   private final CommandSwerveDrivetrain drivetrain;
+//   private final Limelight limelight;
+//   private final PIDController turnController;
 
-  public fuelautoallign(CommandSwerveDrivetrain drivetrain, Limelight limelight) {
-    this.drivetrain = drivetrain;
-    this.limelight = limelight;
+//   private final double maxAngularSpeed = 3.0; 
 
-  this.turnController = new PIDController(0.02, 0.0, 0.0);
-  turnController.setTolerance(1.5);
-  }
+//   public fuelautoallign(CommandSwerveDrivetrain drivetrain, Limelight limelight) {
+//     this.drivetrain = drivetrain;
+//     this.limelight = limelight;
 
-  @Override
-  public void initialize() {
-    turnController.reset();
-  }
+//   this.turnController = new PIDController(0.02, 0.0, 0.0);
+//   turnController.setTolerance(1.5);
+//   }
 
-  @Override
-  public void execute() {
-    if (!limelight.hasTarget()) {
-      // no target: stop rotation
-      drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0, 0, 0)));
-      return;
-    }
+//   @Override
+//   public void initialize() {
+//     turnController.reset();
+//   }
 
-    double errorDeg = limelight.getX();
-    double output = turnController.calculate(errorDeg, 0.0);
+//   @Override
+//   public void execute() {
+//     if (!limelight.hasTarget()) {
+//       // no target: stop rotation
+//       drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0, 0, 0)));
+//       return;
+//     }
 
-    double omega = Math.toRadians(output);
+//     double errorDeg = limelight.getX();
+//     double output = turnController.calculate(errorDeg, 0.0);
 
-    // clamp
-    if (omega > maxAngularSpeed) {
-      omega = maxAngularSpeed;
-    } else if (omega < -maxAngularSpeed) {
-      omega = -maxAngularSpeed;
-    }
+//     double omega = Math.toRadians(output);
 
-    drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0.0, 0.0, omega)));
-  }
+//     // clamp
+//     if (omega > maxAngularSpeed) {
+//       omega = maxAngularSpeed;
+//     } else if (omega < -maxAngularSpeed) {
+//       omega = -maxAngularSpeed;
+//     }
 
-  @Override
-  public void end(boolean interrupted) {
-    drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0, 0, 0)));
-  }
+//     drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0.0, 0.0, omega)));
+//   }
 
-  @Override
-  public boolean isFinished() {
-    return limelight.hasTarget() && turnController.atSetpoint();
-  }
-}
+//   @Override
+//   public void end(boolean interrupted) {
+//     drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds(0, 0, 0)));
+//   }
+
+//   @Override
+//   public boolean isFinished() {
+//     return limelight.hasTarget() && turnController.atSetpoint();
+//   }
+// }

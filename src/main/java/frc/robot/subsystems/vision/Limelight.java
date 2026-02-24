@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.vision.LimelightHelpers.RawFiducial;
@@ -14,9 +16,11 @@ import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -229,7 +233,53 @@ public class Limelight extends SubsystemBase {
     ty = LimelightHelpers.getTY(cameraName);
     RawFiducial[] allTags = LimelightHelpers.getRawFiducials(cameraName);
     int numValidTags = 0;
-    
+    for (LimelightHelpers.RawFiducial t : allTags) {
+      if (t.distToCamera < 4.0) {
+        numValidTags ++;
+      }
+    }
+
+    int[] validTags = new int[numValidTags];
+    int counter = 0;
+    for (RawFiducial t : allTags) {
+      if (t.distToCamera < 4.0) {
+        validTags[counter] = t.id;
+        counter++;
+      }
+    }
+    xDistPub.set(getHorizontalDistanceToHub());
+    yDistPub.set(getStraightDistanceToHub());
+    horizontalDistPub.set(getDistanceToHub());
+
+    double[] poseArr = LimelightHelpers.getBotPose_TargetSpace(cameraName);
+    Pose2d botPose = new Pose2d();
+    if (poseArr.length >= 6) {
+      botPose = new Pose2d(poseArr[0], poseArr[2], Rotation2d.fromDegrees(poseArr[4]));
+    }
+    Logger.recordOutput(cameraName + "/IMUYaw",
+      LimelightHelpers.getIMUData(cameraName).robotYaw * (Math.PI / 180.0));
+    Logger.recordOutput(cameraName + "/BotPoseTargetSapce", botPose); 
+    Logger.recordOutput(cameraName + "/BotPose3dTargetSpace",
+      LimelightHelpers.getBotPose3d_TargetSpace(cameraName));
+
+    var entry = LimelightHelpers.getLimelightNTTableEntry(cameraName, "tcornxy");
+    if (entry != null) {
+      var tcornxy = entry.getDoubleArray(new double[0]);
+      if (tcornxy != null && tcornxy.length > 0) {
+        Logger.recordOutput(cameraName + "/tcornxy", tcornxy);
+      }
+    }
   }
 
+  public Command flashLEDs() {
+    return Commands.sequence(
+      Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceBlink(cameraName)),
+      Commands.waitSeconds(0.6),
+      Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceOff(cameraName))
+    );
+  }
+  
+  public Command ifHasTarget(Command cmd) {
+    return cmd.onlyWhile(this::hasValidTarget);
+  }
 }

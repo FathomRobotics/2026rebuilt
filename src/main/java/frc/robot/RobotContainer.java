@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.Generated.TunerConstants;
-import frc.robot.commands.fuelautoallign;
+// import frc.robot.commands.fuelautoallign;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.Limelight;
 
@@ -39,7 +39,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final Limelight limelight = new Limelight();
+    private static Limelight aprTagLL = new Limelight("aprTagLL",0.38, 0, 0, 0, false);
 
     public RobotContainer() {
         configureBindings();
@@ -47,7 +47,7 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-        joystick.square().onTrue(new fuelautoallign(drivetrain, limelight));
+        // joystick.square().onTrue(new fuelautoallign(drivetrain, limelight));
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
