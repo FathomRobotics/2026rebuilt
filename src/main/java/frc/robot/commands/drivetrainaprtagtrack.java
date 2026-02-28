@@ -17,11 +17,9 @@ public class drivetrainaprtagtrack extends Command {
     private final double toleranceDeg = 1.0;
     private final double maxTurn = 0.5; // max rotational rate (rad/s)
 
-    // mutable container for the rotational rate used by the supplier
     private final double[] rotRef = new double[1];
     private Command applyRequestCmd;
 
-    // supplier that provides the translational portion of the SwerveRequest
     private final Supplier<SwerveRequest> baseSupplier;
 
     public drivetrainaprtagtrack(CommandSwerveDrivetrain drivetrain, Limelight limelight) {
@@ -39,7 +37,7 @@ public class drivetrainaprtagtrack extends Command {
         this.baseSupplier = baseSupplier;
         addRequirements(drivetrain);
         pid.setTolerance(toleranceDeg);
-        pid.enableContinuousInput(-180.0, 180.0); // safe for angles
+        pid.enableContinuousInput(-180.0, 180.0); 
     }
 
     @Override
@@ -47,39 +45,36 @@ public class drivetrainaprtagtrack extends Command {
         pid.reset();
         pid.setSetpoint(0.0);
         rotRef[0] = 0.0;
-
-        Supplier<SwerveRequest> supplier = () -> {
-            SwerveRequest base = null;
-            if (baseSupplier != null) {
-                try {
-                    base = baseSupplier.get();
-                } catch (Exception e) {
-                    base = null;
-                }
-            }
-            if (base instanceof SwerveRequest.FieldCentric) {
-                return ((SwerveRequest.FieldCentric) base).withRotationalRate(rotRef[0]);
-            }
-            return new SwerveRequest.FieldCentric()
-                    .withVelocityX(0.0)
-                    .withVelocityY(0.0)
-                    .withRotationalRate(rotRef[0]);
-        };
-
-        applyRequestCmd = drivetrain.applyRequest(supplier);
-        applyRequestCmd.schedule();
     }
 
     @Override
     public void execute() {
         if (!limelight.hasValidTarget()) {
             rotRef[0] = 0.0;
+            SwerveRequest request = null;
+            if (baseSupplier != null) {
+                try { request = baseSupplier.get(); } catch (Exception e) { request = null; }
+            }
+            if (request instanceof SwerveRequest.FieldCentric) {
+                drivetrain.setControl(((SwerveRequest.FieldCentric) request).withRotationalRate(0.0));
+            } else {
+                drivetrain.setControl(new SwerveRequest.FieldCentric().withVelocityX(0.0).withVelocityY(0.0).withRotationalRate(0.0));
+            }
             return;
         }
-        double tx = limelight.getTX(); // horizontal offset in degrees (Limelight uses getTX/getTY)
+        double tx = limelight.getTX(); 
         double rotation = pid.calculate(tx);
         rotation = Math.max(-maxTurn, Math.min(maxTurn, rotation));
         rotRef[0] = rotation; // treated as rad/s (small value)
+        SwerveRequest request = null;
+        if (baseSupplier != null) {
+            try { request = baseSupplier.get(); } catch (Exception e) { request = null; }
+        }
+        if (request instanceof SwerveRequest.FieldCentric) {
+            drivetrain.setControl(((SwerveRequest.FieldCentric) request).withRotationalRate(rotRef[0]));
+        } else {
+            drivetrain.setControl(new SwerveRequest.FieldCentric().withVelocityX(0.0).withVelocityY(0.0).withRotationalRate(rotRef[0]));
+        }
     }
 
     @Override
@@ -89,12 +84,14 @@ public class drivetrainaprtagtrack extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        if (applyRequestCmd != null) {
-            applyRequestCmd.cancel();
+        SwerveRequest request = null;
+        if (baseSupplier != null) {
+            try { request = baseSupplier.get(); } catch (Exception e) { request = null; }
         }
-        // ensure drivetrain stops rotating
-        drivetrain.applyRequest(() -> new SwerveRequest.FieldCentric()
-                .withVelocityX(0.0).withVelocityY(0.0).withRotationalRate(0.0))
-            .schedule();
+        if (request instanceof SwerveRequest.FieldCentric) {
+            drivetrain.setControl(((SwerveRequest.FieldCentric) request).withRotationalRate(0.0));
+        } else {
+            drivetrain.setControl(new SwerveRequest.FieldCentric().withVelocityX(0.0).withVelocityY(0.0).withRotationalRate(0.0));
+        }
     }
 }

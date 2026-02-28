@@ -47,7 +47,7 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        joystick.circle().onTrue(new drivetrainaprtagtrack(drivetrain, aprTagLL));
+        // joystick.circle().onTrue(new drivetrainaprtagtrack(drivetrain, aprTagLL));
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
@@ -56,6 +56,16 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+        var alignCmd = new drivetrainaprtagtrack(
+        drivetrain,
+        aprTagLL,
+        () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
+               .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+               .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+        );
+
+        joystick.circle().whileTrue(alignCmd);
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
