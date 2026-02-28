@@ -17,7 +17,7 @@ public class drivetrainaprtagtrack extends Command {
 
     private final CommandSwerveDrivetrain drivetrain;
     private final Limelight limelight;
-    private final PIDController pid = new PIDController(0.025, 0.0, 0.002);
+    private final PIDController pid = new PIDController(1, 1., 1);
     private final double toleranceDeg = 1.0;
     private final double maxTurn = 0.5; // max rotational rate (rad/s)
 
