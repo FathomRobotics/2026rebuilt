@@ -13,13 +13,15 @@ public class drivetrainaprtagtrack extends Command {
 
     private final CommandSwerveDrivetrain drivetrain;
     private final Limelight limelight;
-    private final PIDController pid = new PIDController(1, 1., 1);
+    private final PIDController pid = new PIDController(0.025, 0.0, 0.002);
     private final double toleranceDeg = 1.0;
-    private final double maxTurn = 0.5;
+    private final double maxTurn = 0.5; // max rotational rate (rad/s)
 
+    // mutable container for the rotational rate used by the supplier
     private final double[] rotRef = new double[1];
     private Command applyRequestCmd;
 
+    // supplier that provides the translational portion of the SwerveRequest
     private final Supplier<SwerveRequest> baseSupplier;
 
     public drivetrainaprtagtrack(CommandSwerveDrivetrain drivetrain, Limelight limelight) {
@@ -37,7 +39,7 @@ public class drivetrainaprtagtrack extends Command {
         this.baseSupplier = baseSupplier;
         addRequirements(drivetrain);
         pid.setTolerance(toleranceDeg);
-        pid.enableContinuousInput(-180.0, 180.0);
+        pid.enableContinuousInput(-180.0, 180.0); // safe for angles
     }
 
     @Override
@@ -74,10 +76,10 @@ public class drivetrainaprtagtrack extends Command {
             rotRef[0] = 0.0;
             return;
         }
-        double tx = limelight.getTX();
+        double tx = limelight.getTX(); // horizontal offset in degrees (Limelight uses getTX/getTY)
         double rotation = pid.calculate(tx);
         rotation = Math.max(-maxTurn, Math.min(maxTurn, rotation));
-        rotRef[0] = rotation; 
+        rotRef[0] = rotation; // treated as rad/s (small value)
     }
 
     @Override
