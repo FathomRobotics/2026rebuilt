@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.Generated.TunerConstants;
-import frc.robot.commands.drivetrainaprtagtrack;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.Limelight;
 
@@ -56,16 +55,6 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-
-        var alignCmd = new drivetrainaprtagtrack(
-        drivetrain,
-        aprTagLL,
-        () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
-               .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-               .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
-        );
-
-        joystick.circle().whileTrue(alignCmd);
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
