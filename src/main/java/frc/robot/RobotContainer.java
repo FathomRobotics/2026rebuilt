@@ -31,7 +31,8 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private static Limelight aprTagLL = new Limelight("aprtag", 1, 0, 0, 0, false);
+    private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
+    private static Limelight intakeLL = new Limelight("limelight-intake", 1, 0, 0, 0, false);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
