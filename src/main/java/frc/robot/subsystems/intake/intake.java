@@ -30,9 +30,5 @@ public class intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-    // switch (state) {
-    //   case IDLE
-    // }
   }
 }
