@@ -7,8 +7,7 @@ public class canIDs {
     public static int shooterFlywheelACANID = 17;
     public static int shooterFlywheelBCANID = 18;
     public static int shooterHoodCANID = 19;
-    public static int intakeSideAExtendCANID = 20;
-    public static int intakeSideBExtendCANID = 21;
+    public static int intakeExtendCANID = 20;
     public static int intakeCANID = 22;
     public static int climbCANID = 23;
 }
