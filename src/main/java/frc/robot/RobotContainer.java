@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.Generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.spindexer.spindexer;
+import frc.robot.subsystems.shooter.shooter;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.states;
 
@@ -33,6 +34,8 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     public final spindexer spindexer = new spindexer();
+    public final shooter shooter = new shooter();
+
 
     private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
     private static Limelight intakeLL = new Limelight("limelight-intake", 1, 0, 0, 0, false);
@@ -69,6 +72,9 @@ public class RobotContainer {
 
         joystick.cross().onTrue(
             spindexer.setStateCommand(states.spindexState.RUNNING)
+        );
+        joystick.circle().onTrue(
+            shooter.setStateCommand(states.shooterState.SPINNING_UP)
         );
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
