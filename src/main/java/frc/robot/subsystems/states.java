@@ -20,4 +20,9 @@ public class states {
         IDLE, 
         RUNNING
     }
+
+    public enum turretspinState {
+        IDLE, 
+        TRACKING
+    }
 }
