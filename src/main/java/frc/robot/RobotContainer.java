@@ -19,6 +19,7 @@ import frc.Generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.spindexer.spindexer;
 import frc.robot.subsystems.shooter.shooter;
+import frc.robot.subsystems.turret.turret;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.states;
 
@@ -35,6 +36,8 @@ public class RobotContainer {
 
     public final spindexer spindexer = new spindexer();
     public final shooter shooter = new shooter();
+    public final turret turret = new turret();
+
 
 
     private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
@@ -73,9 +76,12 @@ public class RobotContainer {
         joystick.cross().onTrue(
             spindexer.setStateCommand(states.spindexState.RUNNING)
         );
-        joystick.circle().onTrue(
-            shooter.setStateCommand(states.shooterState.SPINNING_UP)
-        );
+
+        if(shooterLL.hasValidTarget() == true){
+            turret.setStateCommand(states.turretspinState.TRACKING);
+        }else{
+            turret.setStateCommand(states.turretspinState.IDLE);
+        }
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.square().whileTrue(drivetrain.applyRequest(() ->
