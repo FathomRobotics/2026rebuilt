@@ -6,11 +6,11 @@ package frc.robot.subsystems.intake;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -24,11 +24,11 @@ import frc.robot.subsystems.states.intakeState;
 
 public class intake extends SubsystemBase {
 
-  private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, "rio");
-  private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, "rio");
+  private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, CANBus.roboRIO());
+  private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
 
   private double maxExtension = 15;
-  private double rotationsPerSec = maxExtension / 84;
+  private double rotationsPerSec = maxExtension / 30;
 
   private double targetPose = 0;
   private final MotionMagicVoltage motionControl = new MotionMagicVoltage(0);
@@ -69,25 +69,25 @@ public class intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    switch (state) {
-      case IDLE:
-        this.setSpeed(0);
-        break;
-      case INTAKING:
-        this.setIntakeMotorSpeed(1);
-        break;
-      case EXTENDING:
-        this.setIntakeMotorSpeed(0);
-        this.goToPose(maxExtension);
-        break;
-      case EXTENDED:
-        this.setIntakeMotorSpeed(1);
-        break;
-      case RETRACTING:
-        this.setIntakeMotorSpeed(0);
-        this.goToPose(0);
-        break;
-    }
+    // switch (state) {
+    //   case IDLE:
+    //     this.setSpeed(0);
+    //     break;
+    //   case INTAKING:
+    //     this.setIntakeMotorSpeed(1);
+    //     break;
+    //   case EXTENDING:
+    //     this.setIntakeMotorSpeed(0);
+    //     this.goToPose(15 + getPostition());
+    //     break;
+    //   case EXTENDED:
+    //     this.setIntakeMotorSpeed(1);
+    //     break;
+    //   case RETRACTING:
+    //     this.setIntakeMotorSpeed(0);
+    //     this.goToPose(0 + getPostition());
+    //     break;
+    // }
   }
 
   public void goToPose(double newPosition) {

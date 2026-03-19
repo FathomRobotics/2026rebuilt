@@ -9,15 +9,26 @@ public class states {
     }
 
     public enum intakeState {
-        IDLE, 
-        INTAKING, 
-        EXTENDING, 
-        EXTENDED, 
-        RETRACTING
+        IDLE(0), 
+        INTAKING(15), 
+        EXTENDING(15), 
+        EXTENDED(15), 
+        RETRACTING(0);
+        
+        private double intakePose;
+
+        intakeState(double intakePose) {
+            this.intakePose = intakePose;
+        }
+
+        public double getIntakePose() {
+            return this.intakePose;
+        }
     }
 
     public enum spindexState {
         IDLE, 
         RUNNING
     }
+
 }

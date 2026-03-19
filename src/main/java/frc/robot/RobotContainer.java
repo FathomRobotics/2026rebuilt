@@ -72,14 +72,30 @@ public class RobotContainer {
         joystick.cross().onTrue(
             spindexer.setStateCommand(states.spindexState.RUNNING)
         );
-        joystick.L1().onTrue(
-            intake.setStateCommand(states.intakeState.INTAKING)
+
+        joystick.cross().onFalse(
+            spindexer.setStateCommand(states.spindexState.IDLE)
         );
-        joystick.touchpad().onTrue(
-            intake.setStateCommand(states.intakeState.RETRACTING)
-        );
+
         joystick.R1().onTrue(
-            intake.setStateCommand(states.intakeState.EXTENDING)
+          Commands.sequence(
+            this.intake.goToPositionCommand(states.intakeState.INTAKING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.INTAKING)
+          )
+        );
+        
+        joystick.L1().onTrue(
+          Commands.sequence(
+            this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.EXTENDING)
+          )
+        );
+
+        joystick.square().onTrue(
+            Commands.sequence(
+                this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.RETRACTING)
+            )
         );
 
 
