@@ -87,7 +87,7 @@ public class RobotContainer {
             turret.setStateCommand(states.turretspinState.IDLE);
         }
 
-        this.shooter.setSpeed(operator.getLeftX * 0.5)
+        this.shooter.setSpeed(operator.getLeftX() * 0.5);
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.square().whileTrue(drivetrain.applyRequest(() ->
