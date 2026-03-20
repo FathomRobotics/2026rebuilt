@@ -74,7 +74,10 @@ public class RobotContainer {
         );
 
         joystick.cross().onTrue(
-            spindexer.setStateCommand(states.spindexState.RUNNING)
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.RUNNING),
+                shooter.setStateCommand(states.shooterState.SHOOTING)
+            )
         );
 
         if(shooterLL.hasValidTarget() == true){

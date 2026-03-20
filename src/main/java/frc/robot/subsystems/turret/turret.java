@@ -27,7 +27,7 @@ public class turret extends SubsystemBase {
 
       public turretspinState state = states.turretspinState.IDLE;
 
-      private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
+      private static Limelight shooterLL = new Limelight("limelight-objtrac", 1, 0, 0, 0, false);
 
       double tx = shooterLL.getTX();
       double headingError = -tx;
