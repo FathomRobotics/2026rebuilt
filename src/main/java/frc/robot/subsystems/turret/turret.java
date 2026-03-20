@@ -29,10 +29,10 @@ public class turret extends SubsystemBase {
 
       private static Limelight shooterLL = new Limelight("limelight-objtrac", 1, 0, 0, 0, false);
 
-      double tx = shooterLL.getTX();
-      double headingError = -tx;
-      double KpAim = -0.04;
-      double minAimCommand = 0.05;
+      private double kP = 0.05;
+      private double kD = 0.01;
+      private double m_lastError = 0.0;
+      private double m_goalX = 0.0;
 
   /** Creates a new turret. */
   public turret() {
@@ -50,16 +50,20 @@ public class turret extends SubsystemBase {
         this.setSpeed(0);
         break;
       case TRACKING:
-        double steeringAdjust = 0.0;
-        if (tx > 1.0) {
-            steeringAdjust = (KpAim * headingError) - minAimCommand;
-          }
-        else if (tx < -1.0) {
-            steeringAdjust = (KpAim * headingError) + minAimCommand;
-          }
-        
-        this.setSpeed(steeringAdjust);
-        break;
+        boolean hasTarget = shooterLL.hasValidTarget();
+        if(hasTarget){
+          double tx = shooterLL.getTX();
+          double error = m_goalX - tx;
+          double dError = error - m_lastError;
+
+          double power = kP * error + kD * dError;
+
+          this.setSpeed(power);
+          m_lastError = error;
+        }else{
+          this.setSpeed(0.0);
+          m_lastError = 0.0;
+        }
     }
 
   }
