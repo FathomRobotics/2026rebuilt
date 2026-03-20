@@ -91,7 +91,7 @@ public class RobotContainer {
           )
         );
 
-        joystick.square().onTrue(
+        joystick.circle().onTrue(
             Commands.sequence(
                 this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.RETRACTING)

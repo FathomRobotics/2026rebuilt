@@ -10,6 +10,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,12 +48,21 @@ public class intake extends SubsystemBase {
 
     var limitConf = new CurrentLimitsConfigs();
 
-    FeedbackConfigs fbConf = new FeedbackConfigs();
+    limitConf.StatorCurrentLimit = 90;
+    limitConf.StatorCurrentLimitEnable = true;
 
     var motionMagicConfigs = conf.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 10;
     motionMagicConfigs.MotionMagicAcceleration = 10 * 2;
     motionMagicConfigs.MotionMagicJerk = 10 * 2 * 3;
+
+    Slot0Configs slot0 = conf.Slot0;
+    slot0.kP = 0.5;
+    slot0.kV = 4;
+    slot0.kA = 0.1;
+    slot0.kP = 25;
+    slot0.kI = 0;
+    slot0.kD = 0;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
       StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
@@ -69,25 +79,7 @@ public class intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // switch (state) {
-    //   case IDLE:
-    //     this.setSpeed(0);
-    //     break;
-    //   case INTAKING:
-    //     this.setIntakeMotorSpeed(1);
-    //     break;
-    //   case EXTENDING:
-    //     this.setIntakeMotorSpeed(0);
-    //     this.goToPose(15 + getPostition());
-    //     break;
-    //   case EXTENDED:
-    //     this.setIntakeMotorSpeed(1);
-    //     break;
-    //   case RETRACTING:
-    //     this.setIntakeMotorSpeed(0);
-    //     this.goToPose(0 + getPostition());
-    //     break;
-    // }
+    intakeExtendMotor.setControl(motionControl.withPosition(targetPose).withSlot(0));
   }
 
   public void goToPose(double newPosition) {
