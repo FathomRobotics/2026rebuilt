@@ -83,6 +83,10 @@ public class RobotContainer {
             turret.setStateCommand(states.turretspinState.IDLE);
         }
 
+        joystick.povUp().onTrue(
+            shooter.setStateCommand(states.shooterState.SHOOTING)
+        );
+
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.square().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
