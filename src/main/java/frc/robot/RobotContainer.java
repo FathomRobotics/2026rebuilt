@@ -46,6 +46,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandPS5Controller joystick = new CommandPS5Controller(0);
+    private final CommandPS5Controller operator = new CommandPS5Controller(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -86,9 +87,7 @@ public class RobotContainer {
             turret.setStateCommand(states.turretspinState.IDLE);
         }
 
-        joystick.povUp().onTrue(
-            shooter.setStateCommand(states.shooterState.SHOOTING)
-        );
+        this.shooter.setSpeed(operator.getLeftX * 0.5)
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.square().whileTrue(drivetrain.applyRequest(() ->
