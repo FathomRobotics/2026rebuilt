@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.canIDs;
 import frc.robot.subsystems.states.hoodState;
 import frc.robot.subsystems.states.shooterState;
+import frc.robot.subsystems.vision.Limelight;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -22,6 +23,9 @@ public class hood extends SubsystemBase {
   private TalonFX shooterHood = new TalonFX(canIDs.shooterHoodCANID, "rio");
 
   public hoodState state = states.hoodState.IDLE;
+
+  private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
+
     
   /** Creates a new shooter. */
   public hood() {
@@ -39,6 +43,10 @@ public class hood extends SubsystemBase {
         this.setSpeed(0);
         break;
       case TRACKING:
+        double pos = shooterHood.getPosition().getValueAsDouble();
+        boolean hasTarget = shooterLL.hasValidTarget();
+        if(hasTarget){
+        }
         this.setSpeed(1);
         break;
         
