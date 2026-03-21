@@ -37,7 +37,7 @@ public class intake extends SubsystemBase {
       case IDLE:
         this.setSpeed(0);
         break;
-      case SHOOTING:
+      case INTAKING:
         this.setSpeed(0.75);
         break;
         

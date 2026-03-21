@@ -20,6 +20,8 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.spindexer.spindexer;
 import frc.robot.subsystems.shooter.shooter;
 import frc.robot.subsystems.turret.turret;
+import frc.robot.subsystems.intake.intake;
+
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.states;
 
@@ -37,6 +39,8 @@ public class RobotContainer {
     public final spindexer spindexer = new spindexer();
     public final shooter shooter = new shooter();
     public final turret turret = new turret();
+    public final intake intake = new intake();
+
 
 
 
@@ -46,7 +50,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandPS5Controller joystick = new CommandPS5Controller(0);
-    private final CommandPS5Controller operator = new CommandPS5Controller(1);
+    private final CommandPS5Controller joystick2 = new CommandPS5Controller(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -87,24 +91,22 @@ public class RobotContainer {
             )
         );
 
-        joystick.cross().onTrue(
+        joystick2.circle().onTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.RUNNING),
-                shooter.setStateCommand(states.shooterState.SHOOTING)
+                intake.setStateCommand(states.intakeState.IDLE)
             )
         );
 
-        joystick.cross().onTrue(
+        joystick2.cross().onTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.RUNNING),
-                shooter.setStateCommand(states.shooterState.SHOOTING)
+                intake.setStateCommand(states.intakeState.INTAKING)
             )
         );
 
         turret.setStateCommand(states.turretspinState.TRACKING);
 
 
-        this.shooter.setSpeed(operator.getLeftX() * 0.5);
+        //this.shooter.setSpeed(joystick2.getLeftX() * 0.5);
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.square().whileTrue(drivetrain.applyRequest(() ->
