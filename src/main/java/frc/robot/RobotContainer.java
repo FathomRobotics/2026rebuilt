@@ -42,6 +42,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandPS5Controller joystick = new CommandPS5Controller(0);
+    private final CommandPS5Controller joystick2 = new CommandPS5Controller(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -77,26 +78,28 @@ public class RobotContainer {
             spindexer.setStateCommand(states.spindexState.IDLE)
         );
 
-        joystick.R1().onTrue(
+        joystick2.R1().onTrue(
           Commands.sequence(
             this.intake.goToPositionCommand(states.intakeState.INTAKING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.INTAKING)
           )
         );
         
-        joystick.L1().onTrue(
+        joystick2.L1().onTrue(
           Commands.sequence(
             this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.EXTENDING)
           )
         );
 
-        joystick.circle().onTrue(
+        joystick2.circle().onTrue(
             Commands.sequence(
                 this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.RETRACTING)
             )
         );
+
+        this.intake.setSpeed(joystick2.getLeftX());
 
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
