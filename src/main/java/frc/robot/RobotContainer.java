@@ -100,7 +100,7 @@ public class RobotContainer {
         );
 
         this.intake.setSpeed(joystick2.getLeftX());
-
+        
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.square().whileTrue(drivetrain.applyRequest(() ->
