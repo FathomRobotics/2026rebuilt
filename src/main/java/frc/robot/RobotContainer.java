@@ -76,11 +76,14 @@ public class RobotContainer {
 
         joystick.cross().onTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.RUNNING),
-                shooter.setStateCommand(states.shooterState.SHOOTING),
-                turret.setStateCommand(states.turretspinState.TRACKING)
+                shooter.setStateCommand(states.shooterState.SHOOTING)
             )
         );
+
+        joystick.circle().onTrue(
+            turret.setStateCommand(states.turretspinState.TRACKING)
+        );
+
 
         this.shooter.setSpeed(operator.getLeftX() * 0.5);
 
