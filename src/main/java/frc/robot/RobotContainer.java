@@ -40,7 +40,7 @@ public class RobotContainer {
 
 
 
-    private static Limelight shooterLL = new Limelight("limelight-objtrac", 1, 0, 0, 0, false);
+    private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
     private static Limelight intakeLL = new Limelight("limelight-intake", 1, 0, 0, 0, false);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -87,9 +87,7 @@ public class RobotContainer {
             )
         );
 
-        //joystick.circle().onTrue(
-            turret.setStateCommand(states.turretspinState.TRACKING);
-        //);
+        turret.setStateCommand(states.turretspinState.TRACKING);
 
 
         this.shooter.setSpeed(operator.getLeftX() * 0.5);
