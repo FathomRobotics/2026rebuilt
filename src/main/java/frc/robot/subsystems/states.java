@@ -25,4 +25,9 @@ public class states {
         IDLE, 
         TRACKING
     }
+    
+    public enum hoodState {
+        IDLE, 
+        TRACKING
+    }
 }
