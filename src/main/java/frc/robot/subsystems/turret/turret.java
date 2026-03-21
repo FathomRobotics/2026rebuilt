@@ -29,8 +29,8 @@ public class turret extends SubsystemBase {
 
       private static Limelight shooterLL = new Limelight("limelight-objtrac", 1, 0, 0, 0, false);
 
-      private double kP = 0.05;
-      private double kD = 0.01;
+      private double kP = 0.005;
+      private double kD = 0.001;
       private double m_lastError = 0.0;
       private double m_goalX = 0.0;
 

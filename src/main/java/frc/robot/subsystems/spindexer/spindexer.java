@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems.spindexer;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,14 +18,20 @@ import frc.robot.subsystems.states.spindexState;
 
 public class spindexer extends SubsystemBase {
 
-  private TalonFX spindexerMotor = new TalonFX(canIDs.spindexCANID, "rio");
+  private TalonFX spindexerMotor = new TalonFX(canIDs.spindexCANID, CANBus.roboRIO());
+  private TalonFX kickerMotor = new TalonFX(canIDs.turretkickerCANID, CANBus.roboRIO());
 
   public spindexState state = states.spindexState.IDLE;
 
   public spindexer() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
 
+    conf.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     spindexerMotor.setNeutralMode(NeutralModeValue.Brake);
+    kickerMotor.setNeutralMode(NeutralModeValue.Brake);
+
+    spindexerMotor.getConfigurator().apply(conf);
   }
 
   @Override
@@ -41,6 +49,7 @@ public class spindexer extends SubsystemBase {
 
   public void setSpeed(double speed) {
     spindexerMotor.set(speed);
+    kickerMotor.set(speed);
   }
 
   public void setState(spindexState newState){
