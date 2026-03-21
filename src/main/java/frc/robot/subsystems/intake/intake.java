@@ -4,31 +4,57 @@
 
 package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.canIDs;
-import frc.robot.subsystems.states;
 import frc.robot.subsystems.states.intakeState;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.states;
 
 public class intake extends SubsystemBase {
 
-  private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, "rio");
   private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, "rio");
 
   public intakeState state = states.intakeState.IDLE;
-
+    
+  /** Creates a new shooter. */
   public intake() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
 
-    intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
+
   }
 
   @Override
   public void periodic() {
+    // This method will be called once per scheduler run
+    switch (state) {
+      case IDLE:
+        this.setSpeed(0);
+        break;
+      case SHOOTING:
+        this.setSpeed(0.75);
+        break;
+        
+    }
   }
+
+  public void setSpeed(double speed) {
+    intakeMotor.set(speed);
+
+  }
+
+  public void setState(intakeState newState){
+    this.state = newState;
+  }
+    
+  public Command setStateCommand(intakeState newState){
+    return runOnce( () -> setState(newState));
+  }
+
 }

@@ -10,6 +10,11 @@ public class states {
 
     public enum intakeState {
         IDLE, 
+        SHOOTING
+    }
+
+    public enum intakeExtensionState {
+        IDLE, 
         INTAKING, 
         EXTENDING, 
         EXTENDED, 

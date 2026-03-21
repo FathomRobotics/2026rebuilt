@@ -87,6 +87,20 @@ public class RobotContainer {
             )
         );
 
+        joystick.cross().onTrue(
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.RUNNING),
+                shooter.setStateCommand(states.shooterState.SHOOTING)
+            )
+        );
+
+        joystick.cross().onTrue(
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.RUNNING),
+                shooter.setStateCommand(states.shooterState.SHOOTING)
+            )
+        );
+
         turret.setStateCommand(states.turretspinState.TRACKING);
 
 
