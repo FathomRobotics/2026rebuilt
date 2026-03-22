@@ -20,6 +20,7 @@ public class shooter extends SubsystemBase {
 
   private TalonFX shooterflywheelA = new TalonFX(canIDs.shooterFlywheelACANID, "rio");
   private TalonFX shooterflywheelB = new TalonFX(canIDs.shooterFlywheelBCANID, "rio");
+  private TalonFX turretKicker = new TalonFX(canIDs.turretkickerCANID, "rio");
 
   public shooterState state = states.shooterState.IDLE;
     
@@ -29,6 +30,8 @@ public class shooter extends SubsystemBase {
 
     shooterflywheelA.setNeutralMode(NeutralModeValue.Brake);
     shooterflywheelB.setNeutralMode(NeutralModeValue.Brake);
+    turretKicker.setNeutralMode(NeutralModeValue.Brake);
+
 
   }
 
@@ -55,6 +58,7 @@ public class shooter extends SubsystemBase {
   public void setSpeed(double speed) {
     shooterflywheelA.set(speed);
     shooterflywheelB.set(speed);
+    turretKicker.set(speed);
 
   }
 
