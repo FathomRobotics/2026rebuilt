@@ -43,7 +43,7 @@ public class intake extends SubsystemBase {
   public intake() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
 
-    intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
+    // intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
 
     var limitConf = new CurrentLimitsConfigs();
@@ -95,7 +95,7 @@ public class intake extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    intakeMotor.set(speed);
+    // intakeMotor.set(speed);
     intakeExtendMotor.set(speed);
   }
 

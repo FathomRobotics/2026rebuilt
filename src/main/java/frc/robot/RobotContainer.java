@@ -66,6 +66,9 @@ public class RobotContainer {
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
+
+        this.intake.setState(states.intakeState.IDLE);
+
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
@@ -78,29 +81,26 @@ public class RobotContainer {
             spindexer.setStateCommand(states.spindexState.IDLE)
         );
 
-        joystick2.R1().onTrue(
+        joystick.R1().onTrue(
           Commands.sequence(
             this.intake.goToPositionCommand(states.intakeState.INTAKING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.INTAKING)
           )
         );
         
-        joystick2.L1().onTrue(
+        joystick.L1().onTrue(
           Commands.sequence(
             this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.EXTENDING)
           )
         );
 
-        joystick2.circle().onTrue(
+        joystick.circle().onTrue(
             Commands.sequence(
                 this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.RETRACTING)
             )
-        );
-
-        this.intake.setSpeed(joystick2.getLeftX());
-        
+        );        
 
         joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.square().whileTrue(drivetrain.applyRequest(() ->
