@@ -52,8 +52,8 @@ public class intake extends SubsystemBase {
     limitConf.StatorCurrentLimitEnable = true;
 
     var motionMagicConfigs = conf.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 10;
-    motionMagicConfigs.MotionMagicAcceleration = 10 * 2;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 30;
+    motionMagicConfigs.MotionMagicAcceleration = 40;
     motionMagicConfigs.MotionMagicJerk = 10 * 2 * 3;
 
     Slot0Configs slot0 = conf.Slot0;
