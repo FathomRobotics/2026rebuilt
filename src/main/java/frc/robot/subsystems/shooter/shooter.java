@@ -49,7 +49,7 @@ public class shooter extends SubsystemBase {
         this.setSpeed(1);
         break;
       case SHOOTING:
-        this.setSpeed(1);
+        this.setSpeed(0.25);
         break;
         
     }
