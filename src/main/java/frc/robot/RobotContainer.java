@@ -84,6 +84,7 @@ public class RobotContainer {
         joystick.R1().onTrue(
           Commands.sequence(
             this.intake.goToPositionCommand(states.intakeState.INTAKING.getIntakePose()),
+            this.intake.setSpeedCommand(() -> 0.5),
                 this.intake.setStateCommand(states.intakeState.INTAKING)
           )
         );

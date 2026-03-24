@@ -52,8 +52,8 @@ public class intake extends SubsystemBase {
     limitConf.StatorCurrentLimitEnable = true;
 
     var motionMagicConfigs = conf.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 30;
-    motionMagicConfigs.MotionMagicAcceleration = 40;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 50;
+    motionMagicConfigs.MotionMagicAcceleration = 50;
     motionMagicConfigs.MotionMagicJerk = 10 * 2 * 3;
 
     Slot0Configs slot0 = conf.Slot0;
@@ -120,5 +120,9 @@ public class intake extends SubsystemBase {
     
   public Command setStateCommand(intakeState newState){
     return runOnce( () -> setState(newState));
+  }
+
+  public Command setSpeedCommand(DoubleSupplier speed){
+    return Commands.run( () -> setSpeed(speed.getAsDouble()));
   }
 }
