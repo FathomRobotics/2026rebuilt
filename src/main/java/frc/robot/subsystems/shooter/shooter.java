@@ -33,7 +33,6 @@ public class shooter extends SubsystemBase {
 
   private TalonFX shooterflywheelA = new TalonFX(canIDs.shooterFlywheelACANID, "rio");
   private TalonFX shooterflywheelB = new TalonFX(canIDs.shooterFlywheelBCANID, "rio");
-  private TalonFX turretKicker = new TalonFX(canIDs.turretkickerCANID, "rio");
 
   private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
 
@@ -74,7 +73,6 @@ public class shooter extends SubsystemBase {
 
     shooterflywheelA.setNeutralMode(NeutralModeValue.Brake);
     shooterflywheelB.setNeutralMode(NeutralModeValue.Brake);
-    turretKicker.setNeutralMode(NeutralModeValue.Brake);
 
 
     // Add data points: put(key, value)
@@ -119,7 +117,6 @@ public class shooter extends SubsystemBase {
   public void setSpeed(double speed) {
     shooterflywheelA.set(speed);
     shooterflywheelB.set(speed);
-    turretKicker.set(speed);
 
   }
 
