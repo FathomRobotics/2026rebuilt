@@ -81,7 +81,8 @@ public class RobotContainer {
             Commands.sequence(
                 this.intake.setExtensionMotorSpeedCommand(() -> 0.35),
                 Commands.waitSeconds(0.1),
-                this.intake.setExtensionMotorSpeedCommand(() -> -0.35)
+                this.intake.setExtensionMotorSpeedCommand(() -> -0.35),
+                this.intake.setStateCommand(states.intakeState.AGITATE)
                 // this.spindexer.setStateCommand(states.spindexState.RUNNING),
                 // this.shooter.setStateCommand(states.shooterState.SHOOTING)
                 // this.intake.setSpeedCommand(() -> 0.5)
