@@ -104,13 +104,15 @@ public class intake extends SubsystemBase {
 
   public void setSpeed(double speed) {
     intakeMotor.set(speed);
-    //intakeExtendMotor.set(speed);
+  }
+
+  public void setExtensionMotorSpeed(double speed) {
+    intakeExtendMotor.set(speed);
   }
 
   public void setIntakeMotorSpeed(double speed) {
     intakeMotor.set(speed);
   }
-
 
   public Command goToPositionCommand(double target){
     return Commands.runOnce( ()-> goToPose(target));
@@ -132,5 +134,9 @@ public class intake extends SubsystemBase {
 
   public Command setSpeedCommand(DoubleSupplier speed){
     return Commands.run( () -> setSpeed(speed.getAsDouble()));
+  }
+
+  public Command setExtensionMotorSpeedCommand(DoubleSupplier speed){
+    return Commands.run( () -> setExtensionMotorSpeed(speed.getAsDouble()));
   }
 }

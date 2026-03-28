@@ -70,22 +70,29 @@ public class RobotContainer {
         final var idle = new SwerveRequest.Idle();
 
         this.intake.setState(states.intakeState.IDLE);
+        this.spindexer.setState(states.spindexState.IDLE);
+        this.shooter.setState(states.shooterState.IDLE);
 
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.cross().onTrue(
+        joystick.cross().whileTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.RUNNING),
-                shooter.setStateCommand(states.shooterState.SHOOTING),
-                this.intake.setSpeedCommand(() -> 0.5)
-
+                // this.intake.setExtensionMotorSpeedCommand(() -> 0.5),
+                // Commands.waitSeconds(0.5),
+                // this.intake.setExtensionMotorSpeedCommand(() -> -0.5),
+                this.spindexer.setStateCommand(states.spindexState.RUNNING),
+                this.shooter.setStateCommand(states.shooterState.SHOOTING)
+                // this.intake.setSpeedCommand(() -> 0.5)
             )
         );
 
         joystick.cross().onFalse(
-            spindexer.setStateCommand(states.spindexState.IDLE)
+            Commands.sequence(
+                this.spindexer.setStateCommand(states.spindexState.IDLE),
+                this.intake.setExtensionMotorSpeedCommand(() -> 0)
+            )
         );
 
         joystick.L1().onTrue(
@@ -99,25 +106,25 @@ public class RobotContainer {
                 this.intake.setSpeedCommand(() -> -0.5))
         );
         
-        // joystick2.square().onTrue(
-        //   Commands.sequence(
-        //     this.intake.goToPositionCommand(states.intakeState.INTAKING.getIntakePose()),
-        //         this.intake.setStateCommand(states.intakeState.INTAKING)
-        //   )
-        // );
+        joystick2.square().onTrue(
+          Commands.sequence(
+            this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.EXTENDING)
+          )
+        );
 
-        // joystick2.triangle().onTrue(
-        //     Commands.sequence(
-        //         this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
-        //         this.intake.setStateCommand(states.intakeState.RETRACTING)
-        //     )
-        // );        
-
+        joystick2.triangle().onTrue(
+            Commands.sequence(
+                this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.RETRACTING)
+            )
+        );        
+ 
         // joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.square().whileTrue(drivetrain.applyRequest(() ->
         //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         // ));
-
+ 
         // Reset the field-centric heading on left bumper press.
         joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric(drivetrain .getPigeon2().getRotation2d())));
 
