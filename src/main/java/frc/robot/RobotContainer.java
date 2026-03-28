@@ -79,41 +79,49 @@ public class RobotContainer {
 
         joystick.cross().whileTrue(
             Commands.sequence(
-                // this.intake.setExtensionMotorSpeedCommand(() -> 0.5),
-                // Commands.waitSeconds(0.5),
-                // this.intake.setExtensionMotorSpeedCommand(() -> -0.5),
-                this.spindexer.setStateCommand(states.spindexState.RUNNING),
-                this.shooter.setStateCommand(states.shooterState.SHOOTING)
+                this.intake.setExtensionMotorSpeedCommand(() -> 0.35),
+                Commands.waitSeconds(0.1),
+                this.intake.setExtensionMotorSpeedCommand(() -> -0.35)
+                // this.spindexer.setStateCommand(states.spindexState.RUNNING),
+                // this.shooter.setStateCommand(states.shooterState.SHOOTING)
                 // this.intake.setSpeedCommand(() -> 0.5)
             )
         );
 
-        joystick.cross().onFalse(
-            Commands.sequence(
-                this.spindexer.setStateCommand(states.spindexState.IDLE),
-                this.intake.setExtensionMotorSpeedCommand(() -> 0)
-            )
-        );
+        // joystick.cross().onFalse(
+        //     Commands.sequence(
+        //         this.spindexer.setStateCommand(states.spindexState.IDLE),
+        //         this.intake.setExtensionMotorSpeedCommand(() -> 0)
+        //     )
+        // );
 
         joystick.L1().onTrue(
           Commands.sequence(
-            this.intake.setSpeedCommand(() -> 0.5)
+            this.intake.setSpeedCommand(() -> 0.5),
+                this.intake.setStateCommand(states.intakeState.EXTENDED)
           )
         );
+
+        joystick.L1().onFalse(
+            Commands.sequence(
+                this.intake.setSpeedCommand(() -> 0),
+                this.intake.setStateCommand(states.intakeState.EXTENDED)
+                )
+            );
 
         joystick.touchpad().onTrue(
             Commands.sequence(
                 this.intake.setSpeedCommand(() -> -0.5))
         );
         
-        joystick2.square().onTrue(
+        joystick.square().onTrue(
           Commands.sequence(
             this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.EXTENDING)
           )
         );
 
-        joystick2.triangle().onTrue(
+        joystick.triangle().onTrue(
             Commands.sequence(
                 this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.RETRACTING)
