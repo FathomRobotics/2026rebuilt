@@ -11,6 +11,7 @@ import frc.robot.subsystems.canIDs;
 import frc.robot.subsystems.states.shooterState;
 import frc.robot.subsystems.vision.Limelight;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -22,6 +23,11 @@ import static edu.wpi.first.units.Units.RPM;
 import static java.lang.Math.*;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 
 public class shooter extends SubsystemBase {
 
@@ -45,15 +51,40 @@ public class shooter extends SubsystemBase {
   public shooter() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
 
+    Slot0Configs slot0 = conf.Slot0;
+    slot0.kV = 4;
+    slot0.kA = 0.1;
+    slot0.kP = 5;
+    slot0.kI = 0;
+    slot0.kD = 0;
+    slot0.kS = 1;
+
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
+      StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
+      StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
+
+      for (int i = 0; i < 5; ++i) {
+        status = shooterflywheelA.getConfigurator().apply(conf);
+        status2 = shooterflywheelB.getConfigurator().apply(conf);
+        if (status.isOK() && status2.isOK() && status3.isOK()) break;
+      }
+      if (!status.isOK()) {
+        System.out.println("Could not configure device. Error: " + status.toString());
+      }
+
     shooterflywheelA.setNeutralMode(NeutralModeValue.Brake);
     shooterflywheelB.setNeutralMode(NeutralModeValue.Brake);
     turretKicker.setNeutralMode(NeutralModeValue.Brake);
+
 
     // Add data points: put(key, value)
     m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
     m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
     m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
     m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
+
+    SmartDashboard.putNumber("Shooter Shooting Target RPM", 1000.0);
+
 
   }
 
@@ -72,14 +103,14 @@ public class shooter extends SubsystemBase {
         break;
       case SHOOTING:
         // Example: run motor at ____ RPM
-        double targetRPM = 1000.0;
+        double targetRPM = SmartDashboard.getNumber("Shooter Shooting Target RPM", 1000.0);
 
         // Convert RPM to rotations per second
         double targetRPS = targetRPM / 60.0;
 
         // Command the motor in RPS (Phoenix 6 uses rotations/sec for velocity)
         shooterflywheelA.setControl(velocityRequest.withVelocity(targetRPS));
-        shooterflywheelA.setControl(velocityRequest.withVelocity(targetRPS));
+        shooterflywheelB.setControl(velocityRequest.withVelocity(targetRPS));
         break;
         
     }
