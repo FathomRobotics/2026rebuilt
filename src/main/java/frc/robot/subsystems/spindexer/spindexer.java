@@ -20,6 +20,9 @@ public class spindexer extends SubsystemBase {
 
   private TalonFX spindexerMotor = new TalonFX(canIDs.spindexCANID, CANBus.roboRIO());
   private TalonFX kickerMotor = new TalonFX(canIDs.turretkickerCANID, CANBus.roboRIO());
+  private TalonFX shooterflywheelA = new TalonFX(canIDs.shooterFlywheelACANID, "rio");
+  private TalonFX shooterflywheelB = new TalonFX(canIDs.shooterFlywheelBCANID, "rio");
+  
 
   public spindexState state = states.spindexState.IDLE;
 
@@ -44,7 +47,7 @@ public class spindexer extends SubsystemBase {
       case RUNNING:
         this.setSpeed(0.25);
         break;
-    }
+  }
   }
 
   public void setSpeed(double speed) {
