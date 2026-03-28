@@ -80,7 +80,7 @@ public class RobotContainer {
 
         joystick.cross().onTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.RUNNING),
+                //spindexer.setStateCommand(states.spindexState.RUNNING),
                 shooter.setStateCommand(states.shooterState.SHOOTING),
                 turret.setStateCommand(states.turretspinState.TRACKING)
 
@@ -90,7 +90,7 @@ public class RobotContainer {
         );
         joystick.L1().onTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.IDLE),
+                //spindexer.setStateCommand(states.spindexState.IDLE),
                 shooter.setStateCommand(states.shooterState.IDLE)
                 //intake.setStateCommand(states.intakeState.IDLE)
 

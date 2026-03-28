@@ -21,6 +21,8 @@ import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import static edu.wpi.first.units.Units.RPM;
 import static java.lang.Math.*;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+
 public class shooter extends SubsystemBase {
 
   private TalonFX shooterflywheelA = new TalonFX(canIDs.shooterFlywheelACANID, "rio");
@@ -29,15 +31,16 @@ public class shooter extends SubsystemBase {
 
   private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
 
-  private VelocityDutyCycle velocityRequest = new VelocityDutyCycle(0);
-
-
   public shooterState state = states.shooterState.IDLE;
-    
-  double g = 9.8337;
-  double theta = 27.25;
-  double VeloLossOfMotor = 0.85;
 
+  // Control request object for velocity control
+  private final VelocityDutyCycle velocityRequest = new VelocityDutyCycle(0);
+
+  // Falcon 500 has 2048 encoder ticks per revolution
+  private static final double TICKS_PER_REV = 2048.0;
+
+  private final InterpolatingDoubleTreeMap m_table = new InterpolatingDoubleTreeMap();
+    
   /** Creates a new shooter. */
   public shooter() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
@@ -46,6 +49,11 @@ public class shooter extends SubsystemBase {
     shooterflywheelB.setNeutralMode(NeutralModeValue.Brake);
     turretKicker.setNeutralMode(NeutralModeValue.Brake);
 
+    // Add data points: put(key, value)
+    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
+    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
+    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
+    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
 
   }
 
@@ -63,19 +71,16 @@ public class shooter extends SubsystemBase {
         this.setSpeed(1);
         break;
       case SHOOTING:
-        boolean hasTarget = shooterLL.hasValidTarget();
-        if(hasTarget){
-          double R = shooterLL.getTY();
-          double targetVeloBall = sqrt( (R*sin(2*theta)) / g);
+        // Example: run motor at ____ RPM
+        double targetRPM = 1000.0;
 
-          double RPS = (targetVeloBall / (PI * 0.0762)) / (5/3);
+        // Convert RPM to rotations per second
+        double targetRPS = targetRPM / 60.0;
 
-          shooterflywheelA.setControl(velocityRequest.withVelocity(RPS * VeloLossOfMotor));
-          shooterflywheelB.setControl(velocityRequest.withVelocity(RPS * VeloLossOfMotor));
-
-        }else{
-          this.setSpeed(0.0);
-        }
+        // Command the motor in RPS (Phoenix 6 uses rotations/sec for velocity)
+        shooterflywheelA.setControl(velocityRequest.withVelocity(targetRPS));
+        shooterflywheelA.setControl(velocityRequest.withVelocity(targetRPS));
+        break;
         
     }
   }
