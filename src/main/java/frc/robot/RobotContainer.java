@@ -19,6 +19,7 @@ import frc.Generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.spindexer.spindexer;
 import frc.robot.subsystems.intake.intake;
+import frc.robot.subsystems.shooter.shooter;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.subsystems.states;
 
@@ -35,6 +36,7 @@ public class RobotContainer {
 
     public final spindexer spindexer = new spindexer();
     public final intake intake = new intake();
+    public final shooter shooter = new shooter();
 
     private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
     private static Limelight intakeLL = new Limelight("limelight-intake", 1, 0, 0, 0, false);
@@ -59,7 +61,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -74,42 +76,50 @@ public class RobotContainer {
         );
 
         joystick.cross().onTrue(
-            spindexer.setStateCommand(states.spindexState.RUNNING)
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.RUNNING),
+                shooter.setStateCommand(states.shooterState.SHOOTING),
+                this.intake.setSpeedCommand(() -> 0.5)
+
+            )
         );
 
         joystick.cross().onFalse(
             spindexer.setStateCommand(states.spindexState.IDLE)
         );
 
-        joystick.R1().onTrue(
-          Commands.sequence(
-            this.intake.goToPositionCommand(states.intakeState.INTAKING.getIntakePose()),
-            this.intake.setSpeedCommand(() -> 0.5),
-                this.intake.setStateCommand(states.intakeState.INTAKING)
-          )
-        );
-        
         joystick.L1().onTrue(
           Commands.sequence(
-            this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
-                this.intake.setStateCommand(states.intakeState.EXTENDING)
+            this.intake.setSpeedCommand(() -> 0.5)
           )
         );
 
-        joystick.circle().onTrue(
+        joystick.touchpad().onTrue(
             Commands.sequence(
-                this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
-                this.intake.setStateCommand(states.intakeState.RETRACTING)
-            )
-        );        
+                this.intake.setSpeedCommand(() -> -0.5))
+        );
+        
+        // joystick2.square().onTrue(
+        //   Commands.sequence(
+        //     this.intake.goToPositionCommand(states.intakeState.INTAKING.getIntakePose()),
+        //         this.intake.setStateCommand(states.intakeState.INTAKING)
+        //   )
+        // );
 
-        joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.square().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        // joystick2.triangle().onTrue(
+        //     Commands.sequence(
+        //         this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
+        //         this.intake.setStateCommand(states.intakeState.RETRACTING)
+        //     )
+        // );        
+
+        // joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.square().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.povUp().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric(drivetrain .getPigeon2().getRotation2d())));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -42,35 +43,42 @@ public class intake extends SubsystemBase {
 
   public intake() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
+    MotorOutputConfigs motorConf = new MotorOutputConfigs();
 
     intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
 
+    motorConf.withDutyCycleNeutralDeadband(1);
+    motorConf.withNeutralMode(NeutralModeValue.Brake);
+
     var limitConf = new CurrentLimitsConfigs();
 
-    limitConf.StatorCurrentLimit = 90;
-    limitConf.StatorCurrentLimitEnable = true;
+    limitConf.StatorCurrentLimit = 100;
+    limitConf.StatorCurrentLimitEnable = false;
 
-    var motionMagicConfigs = conf.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 50;
-    motionMagicConfigs.MotionMagicAcceleration = 50;
-    motionMagicConfigs.MotionMagicJerk = 10 * 2 * 3;
+    // var motionMagicConfigs = conf.MotionMagic;
+    // motionMagicConfigs.MotionMagicCruiseVelocity = 50;
+    // motionMagicConfigs.MotionMagicAcceleration = 100;
+    // motionMagicConfigs.MotionMagicJerk = 100;
 
-    Slot0Configs slot0 = conf.Slot0;
-    slot0.kP = 0.5;
-    slot0.kV = 4;
-    slot0.kA = 0.1;
-    slot0.kP = 25;
-    slot0.kI = 0;
-    slot0.kD = 0;
+    // Slot0Configs slot0 = conf.Slot0;
+    // slot0.kV = 4;
+    // slot0.kA = 0.1;
+    // slot0.kP = 5;
+    // slot0.kI = 0;
+    // slot0.kD = 0;
+    // slot0.kS = 1;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
       StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
+      StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
+
       for (int i = 0; i < 5; ++i) {
         status = intakeExtendMotor.getConfigurator().apply(conf);
-        status2 = intakeMotor.getConfigurator().apply(conf); 
+        status2 = intakeMotor.getConfigurator().apply(conf);
+        status3 = intakeExtendMotor.getConfigurator().apply(motorConf);
         intakeExtendMotor.getConfigurator().apply(limitConf);
-        if (status.isOK() && status2.isOK()) break;
+        if (status.isOK() && status2.isOK() && status3.isOK()) break;
       }
       if (!status.isOK()) {
         System.out.println("Could not configure device. Error: " + status.toString());
@@ -95,8 +103,8 @@ public class intake extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    // intakeMotor.set(speed);
-    intakeExtendMotor.set(speed);
+    intakeMotor.set(speed);
+    //intakeExtendMotor.set(speed);
   }
 
   public void setIntakeMotorSpeed(double speed) {
