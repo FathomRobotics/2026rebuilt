@@ -133,7 +133,7 @@ public class intake extends SubsystemBase {
   }
 
   public Command setSpeedCommand(DoubleSupplier speed){
-    return Commands.run( () -> setSpeed(speed.getAsDouble()));
+    return Commands.run( () -> setIntakeMotorSpeed(speed.getAsDouble()));
   }
 
   public Command setExtensionMotorSpeedCommand(DoubleSupplier speed){
