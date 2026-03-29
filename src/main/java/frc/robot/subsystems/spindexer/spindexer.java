@@ -45,7 +45,7 @@ public class spindexer extends SubsystemBase {
         this.setSpeed(0);
         break;
       case RUNNING:
-        this.setSpeed(0.80);
+        this.setSpeed(0.60);
         break;
   }
   }
