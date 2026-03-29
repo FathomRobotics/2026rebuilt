@@ -105,17 +105,38 @@ public class RobotContainer {
             )
         );
 
-        joystick2.circle().onTrue(
-            Commands.sequence(
-                this.intake.setSpeedCommand(() -> 0)
-            )
+        joystick.L1().onTrue(
+          Commands.sequence(
+            this.intake.setSpeedCommand(() -> 0.5),
+                this.intake.setStateCommand(states.intakeState.EXTENDED)
+          )
         );
 
-        joystick2.cross().onTrue(
+        joystick.L1().onFalse(
             Commands.sequence(
-                this.intake.setSpeedCommand(() -> 0)
-            )
+                this.intake.setSpeedCommand(() -> 0),
+                this.intake.setStateCommand(states.intakeState.EXTENDED)
+                )
+            );
+
+        joystick2.touchpad().onTrue(
+            Commands.sequence(
+                this.intake.setSpeedCommand(() -> -0.5))
         );
+        
+        joystick2.square().onTrue(
+          Commands.sequence(
+            this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.EXTENDING)
+          )
+        );
+
+        joystick2.triangle().onTrue(
+            Commands.sequence(
+                this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.RETRACTING)
+            )
+        );        
 
 
         //this.shooter.setSpeed(joystick2.getLeftX() * 0.5);
