@@ -71,10 +71,10 @@ public class shooter extends SubsystemBase {
 
 
     // Add data points: put(key, value)
-    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
-    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
-    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
-    m_table.put(0.0, 1000.0); // At 0 meters, 1000 RPM
+    m_table.put(12.0, 25.0); // At -12 TY, 1000 RPS
+    m_table.put(13.0, 26.5); // At 0 meters, 1000 RPS
+    m_table.put(14.0, 28.0); // At 0 meters, 1000 RPS
+    m_table.put(15.0, 29.5); // At 0 meters, 1000 RPS
 
     //SmartDashboard.putNumber("Shooter Shooting Target RPM", 1000.0);
 
@@ -95,10 +95,19 @@ public class shooter extends SubsystemBase {
         this.setSpeed(1);
         break;
       case SHOOTING:
-        final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
-        // set velocity to __ rps, add 0.5 V to overcome gravity
-        shooterflywheelA.setControl(m_request.withVelocity(32).withFeedForward(0.7)); //32
-        shooterflywheelB.setControl(m_request.withVelocity(32).withFeedForward(0.7));
+      final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+      boolean hasTarget = shooterLL.hasValidTarget();
+        if(hasTarget){
+          double ty = abs(shooterLL.getTY());
+          Double motorRPS = m_table.get(ty);
+
+
+          shooterflywheelA.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.7)); //32
+          shooterflywheelB.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.7));
+        }else{
+          shooterflywheelA.setControl(m_request.withVelocity(0).withFeedForward(0.7)); //32
+          shooterflywheelB.setControl(m_request.withVelocity(0).withFeedForward(0.7));
+        }
         break;
         
     }

@@ -29,7 +29,7 @@ public class turret extends SubsystemBase {
 
       private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
 
-      private double kP = 0.007;
+      private double kP = 0.008;
       private double kD = 0.003;
       private double m_lastError = 0.0;
       private double m_goalX = 0.0;
