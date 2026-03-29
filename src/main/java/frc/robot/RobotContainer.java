@@ -90,7 +90,7 @@ public class RobotContainer {
         );
         joystick.L1().onTrue(
             Commands.sequence(
-                //spindexer.setStateCommand(states.spindexState.IDLE),
+                spindexer.setStateCommand(states.spindexState.IDLE),
                 shooter.setStateCommand(states.shooterState.IDLE)
                 //intake.setStateCommand(states.intakeState.IDLE)
 

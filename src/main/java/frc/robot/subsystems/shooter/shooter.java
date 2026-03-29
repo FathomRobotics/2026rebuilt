@@ -12,12 +12,14 @@ import frc.robot.subsystems.states.shooterState;
 import frc.robot.subsystems.vision.Limelight;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.states;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import static edu.wpi.first.units.Units.RPM;
 import static java.lang.Math.*;
@@ -25,14 +27,17 @@ import static java.lang.Math.*;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.Follower;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class shooter extends SubsystemBase {
 
   private TalonFX shooterflywheelA = new TalonFX(canIDs.shooterFlywheelACANID, "rio");
   private TalonFX shooterflywheelB = new TalonFX(canIDs.shooterFlywheelBCANID, "rio");
+
 
   private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
 
@@ -49,6 +54,16 @@ public class shooter extends SubsystemBase {
   /** Creates a new shooter. */
   public shooter() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
+
+    var slot0Configs = new Slot0Configs();
+    slot0Configs.kS = 0.2; // Add 0.1 V output to overcome static friction
+    slot0Configs.kV = 0.2; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kP = 0.4; // An error of 1 rps results in 0.11 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0; // no output for error derivative
+
+    shooterflywheelA.getConfigurator().apply(slot0Configs);
+    shooterflywheelB.getConfigurator().apply(slot0Configs);
 
 
     shooterflywheelA.setNeutralMode(NeutralModeValue.Brake);
@@ -80,7 +95,10 @@ public class shooter extends SubsystemBase {
         this.setSpeed(1);
         break;
       case SHOOTING:
-      
+        final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+        // set velocity to __ rps, add 0.5 V to overcome gravity
+        shooterflywheelA.setControl(m_request.withVelocity(32).withFeedForward(0.7)); //32
+        shooterflywheelB.setControl(m_request.withVelocity(32).withFeedForward(0.7));
         break;
         
     }
