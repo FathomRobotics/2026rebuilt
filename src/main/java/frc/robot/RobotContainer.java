@@ -107,13 +107,13 @@ public class RobotContainer {
 
         joystick2.circle().onTrue(
             Commands.sequence(
-                intake.setStateCommand(states.intakeState.IDLE)
+                this.intake.setSpeedCommand(() -> 0)
             )
         );
 
         joystick2.cross().onTrue(
             Commands.sequence(
-                intake.setStateCommand(states.intakeState.INTAKING)
+                this.intake.setSpeedCommand(() -> 0)
             )
         );
 
