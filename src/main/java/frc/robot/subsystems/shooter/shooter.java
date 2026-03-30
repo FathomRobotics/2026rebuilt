@@ -102,8 +102,8 @@ public class shooter extends SubsystemBase {
           Double motorRPS = m_table.get(ty);
 
 
-          shooterflywheelA.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.7)); //32
-          shooterflywheelB.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.7));
+          shooterflywheelA.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.5)); //32
+          shooterflywheelB.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.5));
         }else{
           shooterflywheelA.setControl(m_request.withVelocity(0).withFeedForward(0.7)); //32
           shooterflywheelB.setControl(m_request.withVelocity(0).withFeedForward(0.7));
