@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side To Nuetral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side Collect"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side Return"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Right",
+  "choreoAuto": false
+}
