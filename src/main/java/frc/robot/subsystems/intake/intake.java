@@ -53,8 +53,8 @@ public class intake extends SubsystemBase {
 
     var limitConf = new CurrentLimitsConfigs();
 
-    limitConf.StatorCurrentLimit = 100;
-    limitConf.StatorCurrentLimitEnable = false;
+    limitConf.StatorCurrentLimit = 50;
+    limitConf.StatorCurrentLimitEnable = true;
 
     var motionMagicConfigs = conf.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 30;

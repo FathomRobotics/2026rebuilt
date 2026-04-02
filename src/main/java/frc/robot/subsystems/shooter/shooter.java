@@ -37,8 +37,7 @@ public class shooter extends SubsystemBase {
 
   private TalonFX shooterflywheelA = new TalonFX(canIDs.shooterFlywheelACANID, "rio");
   private TalonFX shooterflywheelB = new TalonFX(canIDs.shooterFlywheelBCANID, "rio");
-
-
+  
   private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
 
   public shooterState state = states.shooterState.IDLE;
