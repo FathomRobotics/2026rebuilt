@@ -104,6 +104,7 @@ public class AutoRoutines {
         return routine;
 
     }
+    
     public AutoRoutine LeftAuto(){
 
         final AutoRoutine routine = m_factory.newRoutine("LeftAuto");
@@ -113,9 +114,9 @@ public class AutoRoutines {
         routine.active().onTrue(
             Commands.sequence(
 
-            LeftAutoPickUp1.resetOdometry(),
+            LeftAutoShootFirst.resetOdometry(),
             Commands.parallel(
-                LeftAutoPickUp1.cmd(),
+                LeftAutoShootFirst.cmd(),
                     shooter.setStateCommand(states.shooterState.SHOOTING)
             )
             )

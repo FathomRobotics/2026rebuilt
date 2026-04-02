@@ -25,10 +25,11 @@ import frc.robot.subsystems.spindexer.spindexer;
 import frc.robot.subsystems.shooter.shooter;
 import frc.robot.subsystems.turret.turret;
 import frc.robot.subsystems.intake.intake;
+import frc.robot.subsystems.hood.hood;
 
 import frc.robot.subsystems.vision.Limelight;
+import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.subsystems.states;
-
 
 
 public class RobotContainer {
@@ -56,6 +57,7 @@ public class RobotContainer {
     public final shooter shooter = new shooter();
     public final turret turret = new turret();
     public final intake intake = new intake();
+    public final hood hood = new hood();
 
 
 
@@ -69,6 +71,7 @@ public class RobotContainer {
     private final CommandPS5Controller joystick2 = new CommandPS5Controller(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    
 
     public RobotContainer() {
         configureBindings();
@@ -76,6 +79,7 @@ public class RobotContainer {
 
         autoRoutines = new AutoRoutines(autoFactory,this.turret, this.shooter, this.spindexer, this.intake, this.shooterLL);
         autoChooser.addRoutine("Right Auto", autoRoutines::RightAuto);
+        autoChooser.addRoutine("Center Auto", autoRoutines::CenterAuto);
 
 
 
@@ -131,6 +135,23 @@ public class RobotContainer {
             )
         );
 
+
+        //joystick2.povUp().onTrue(
+        //  Commands.sequence(
+        //    this.hood.goToPositionCommand(states.hoodState.UP.getHoodPose()),
+        //        this.hood.setStateCommand(states.hoodState.UP)
+        //  )
+        //);
+        //joystick2.povDown().onTrue(
+        //  Commands.sequence(
+        //    this.hood.goToPositionCommand(states.hoodState.DOWN.getHoodPose()),
+        //        this.hood.setStateCommand(states.hoodState.DOWN)
+        //  )
+        //);
+        //joystick2.povLeft().toggleOnTrue(
+        //    LimelightHelpers.setPipelineIndex("shooterLL", 0)
+        //);
+        
         joystick2.L1().onTrue(
           Commands.sequence(
             this.intake.setSpeedCommand(() -> 0.5),
@@ -144,18 +165,6 @@ public class RobotContainer {
                 this.intake.setStateCommand(states.intakeState.EXTENDED)
                 )
             );
-
-            joystick2.cross().whileTrue(
-            Commands.sequence(
-                this.intake.setExtensionMotorSpeedCommand(() -> 0.35),
-                Commands.waitSeconds(0.1),
-                this.intake.setExtensionMotorSpeedCommand(() -> -0.35),
-                this.intake.setStateCommand(states.intakeState.AGITATE)
-                // this.spindexer.setStateCommand(states.spindexState.RUNNING),
-                // this.shooter.setStateCommand(states.shooterState.SHOOTING)
-                // this.intake.setSpeedCommand(() -> 0.5)
-            )
-        );
 
         joystick2.touchpad().onTrue(
             Commands.sequence(

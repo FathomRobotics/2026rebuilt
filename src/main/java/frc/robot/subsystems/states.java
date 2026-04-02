@@ -37,7 +37,16 @@ public class states {
     }
     
     public enum hoodState {
-        IDLE, 
-        TRACKING
+        DOWN(0), 
+        UP(1.5);
+        private double hoodPose;
+
+        hoodState(double hoodPose){
+            this.hoodPose = hoodPose;
+        }
+        public double getHoodPose(){
+            return this.hoodPose;
+        }
+
     }
 }
