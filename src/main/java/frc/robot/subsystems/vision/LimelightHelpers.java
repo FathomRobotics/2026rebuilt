@@ -1618,10 +1618,10 @@ public class LimelightHelpers {
     /////
     /////
 
-    //public static Command setPipelineIndexCommand(String limelightName, int pipelineIndex) {
-    //    setLimelightNTDouble(limelightName, "pipeline", pipelineIndex);
-    //    return;
-    //}
+    // public static Command setPipelineIndex(String limelightName, int pipelineIndex) {
+    //     setLimelightNTDouble(limelightName, "pipeline", pipelineIndex);
+    //     return null;
+    // }
 
     
     public static void setPriorityTagID(String limelightName, int ID) {

@@ -70,10 +70,10 @@ public class shooter extends SubsystemBase {
 
 
     // Add data points: put(key, value)
-    m_table.put(12.0, 25.0); // At -12 TY, 1000 RPS
-    m_table.put(13.0, 26.5); // At 0 meters, 1000 RPS
-    m_table.put(14.0, 28.0); // At 0 meters, 1000 RPS
-    m_table.put(15.0, 29.5); // At 0 meters, 1000 RPS
+    m_table.put(12.0, 26.0); // At -12 TY, 1000 RPS
+    m_table.put(13.0, 27.5); // At 0 meters, 1000 RPS
+    m_table.put(14.0, 29.0); // At 0 meters, 1000 RPS
+    m_table.put(15.0, 30.5); // At 0 meters, 1000 RPS
 
     //SmartDashboard.putNumber("Shooter Shooting Target RPM", 1000.0);
 
@@ -104,8 +104,8 @@ public class shooter extends SubsystemBase {
           shooterflywheelA.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.5)); //32
           shooterflywheelB.setControl(m_request.withVelocity(motorRPS).withFeedForward(0.5));
         }else{
-          shooterflywheelA.setControl(m_request.withVelocity(0).withFeedForward(0.7)); //32
-          shooterflywheelB.setControl(m_request.withVelocity(0).withFeedForward(0.7));
+          shooterflywheelA.setControl(m_request.withVelocity(0).withFeedForward(0.0)); //32
+          shooterflywheelB.setControl(m_request.withVelocity(0).withFeedForward(0.0));
         }
         break;
         

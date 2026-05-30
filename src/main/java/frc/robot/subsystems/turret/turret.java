@@ -33,7 +33,7 @@ public class turret extends SubsystemBase {
       private double kP = 0.008;
       private double kD = 0.003;
       private double m_lastError = 0.0;
-      private double m_goalX = 4;
+      private double m_goalX = 1;
 
   /** Creates a new turret. */
   public turret() {

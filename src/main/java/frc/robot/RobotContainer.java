@@ -80,6 +80,7 @@ public class RobotContainer {
         autoRoutines = new AutoRoutines(autoFactory,this.turret, this.shooter, this.spindexer, this.intake, this.shooterLL);
         autoChooser.addRoutine("Right Auto", autoRoutines::RightAuto);
         autoChooser.addRoutine("Center Auto", autoRoutines::CenterAuto);
+        autoChooser.addRoutine("Center Auto V2", autoRoutines::CenterAutoVer2);
 
 
 
@@ -148,42 +149,39 @@ public class RobotContainer {
         //        this.hood.setStateCommand(states.hoodState.DOWN)
         //  )
         //);
-        //joystick2.povLeft().toggleOnTrue(
-        //    LimelightHelpers.setPipelineIndex("shooterLL", 0)
+        
+        //joystick2.L1().onTrue(
+        //  Commands.sequence(
+        //    this.intake.setSpeedCommand(() -> 1.0),
+        //        this.intake.setStateCommand(states.intakeState.EXTENDED)
+        //  )
+        //);
+
+        //joystick2.L1().onFalse(
+        //    Commands.sequence(
+        //        this.intake.setSpeedCommand(() -> 0),
+        //        this.intake.setStateCommand(states.intakeState.EXTENDED)
+        //        )
+        //    );
+
+        //joystick2.touchpad().onTrue(
+        //    Commands.sequence(
+        //        this.intake.setSpeedCommand(() -> -0.5))
         //);
         
-        joystick2.L1().onTrue(
-          Commands.sequence(
-            this.intake.setSpeedCommand(() -> 0.5),
-                this.intake.setStateCommand(states.intakeState.EXTENDED)
-          )
-        );
+        //joystick2.square().onTrue(
+        //  Commands.sequence(
+        //    this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
+        //        this.intake.setStateCommand(states.intakeState.EXTENDING)
+        //  )
+        //);
 
-        joystick2.L1().onFalse(
-            Commands.sequence(
-                this.intake.setSpeedCommand(() -> 0),
-                this.intake.setStateCommand(states.intakeState.EXTENDED)
-                )
-            );
-
-        joystick2.touchpad().onTrue(
-            Commands.sequence(
-                this.intake.setSpeedCommand(() -> -0.5))
-        );
-        
-        joystick2.square().onTrue(
-          Commands.sequence(
-            this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
-                this.intake.setStateCommand(states.intakeState.EXTENDING)
-          )
-        );
-
-        joystick2.triangle().onTrue(
-            Commands.sequence(
-                this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
-                this.intake.setStateCommand(states.intakeState.RETRACTING)
-            )
-        );        
+        //joystick2.triangle().onTrue(
+        //    Commands.sequence(
+        //        this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
+        //        this.intake.setStateCommand(states.intakeState.RETRACTING)
+        //    )
+        //);        
 
 
         //this.shooter.setSpeed(joystick2.getLeftX() * 0.5);

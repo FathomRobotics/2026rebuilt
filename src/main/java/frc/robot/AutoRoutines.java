@@ -74,7 +74,6 @@ public class AutoRoutines {
 
         final AutoRoutine routine = m_factory.newRoutine("CenterAuto");
         final AutoTrajectory CenterAutoShootFirst = routine.trajectory("CenterAutoShootFirst");
-        final AutoTrajectory CenterAutoGoHome = routine.trajectory("CenterAutoGoHome");
 
         routine.active().onTrue(
             Commands.sequence(
@@ -89,15 +88,81 @@ public class AutoRoutines {
 
         CenterAutoShootFirst.done().onTrue(
             Commands.sequence(
-                new WaitCommand(1),
+                new WaitCommand(3),
                 turret.setStateCommand(states.turretspinState.TRACKING),
                 new WaitCommand(1),
                 spindexer.setStateCommand(states.spindexState.RUNNING),
                 new WaitCommand(2),
-                turret.setStateCommand(states.turretspinState.TRACKING),
-                CenterAutoGoHome.cmd(),
+                turret.setStateCommand(states.turretspinState.IDLE),
                 spindexer.setStateCommand(states.spindexState.IDLE),
                 shooter.setStateCommand(states.shooterState.IDLE)
+            )
+            );
+
+        return routine;
+
+    }
+
+    public AutoRoutine CenterAutoVer2(){
+
+        final AutoRoutine routine = m_factory.newRoutine("CenterAutoVer2");
+        final AutoTrajectory CenterAutoShootFirst = routine.trajectory("CenterAutoShootFirst");
+        final AutoTrajectory CenterAutoPickUp1 = routine.trajectory("CenterAutoPickUp1");
+        final AutoTrajectory CenterAutoPickUp2 = routine.trajectory("CenterAutoPickUp2");
+        final AutoTrajectory CenterAutoShootSecond = routine.trajectory("CenterAutoShootSecond");
+
+
+        routine.active().onTrue(
+            Commands.sequence(
+
+            CenterAutoShootFirst.resetOdometry(),
+            Commands.parallel(
+                CenterAutoShootFirst.cmd(),
+                    shooter.setStateCommand(states.shooterState.SHOOTING)
+            )
+            )
+        );
+
+        CenterAutoShootFirst.done().onTrue(
+            Commands.sequence(
+                new WaitCommand(3),
+                turret.setStateCommand(states.turretspinState.TRACKING),
+                new WaitCommand(1),
+                spindexer.setStateCommand(states.spindexState.RUNNING),
+                new WaitCommand(2),
+                turret.setStateCommand(states.turretspinState.IDLE),
+                CenterAutoPickUp1.cmd(),
+                spindexer.setStateCommand(states.spindexState.IDLE),
+                shooter.setStateCommand(states.shooterState.IDLE)
+            )
+            );
+
+            CenterAutoPickUp1.done().onTrue(
+            Commands.parallel(
+                intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
+                intake.setSpeedCommand(() -> 0.7),
+                CenterAutoPickUp2.cmd()
+
+            )
+            );
+
+            CenterAutoPickUp2.done().onTrue(
+            Commands.sequence(
+                new WaitCommand(0.5),
+                intake.setSpeedCommand(() -> 0.7),
+                CenterAutoShootSecond.cmd(),
+                shooter.setStateCommand(states.shooterState.SHOOTING),
+                new WaitCommand(2.5),
+                turret.setStateCommand(states.turretspinState.TRACKING),
+                new WaitCommand(1),
+                spindexer.setStateCommand(states.spindexState.RUNNING),
+                new WaitCommand(1),
+                intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
+                new WaitCommand(2),
+                turret.setStateCommand(states.turretspinState.IDLE),
+                spindexer.setStateCommand(states.spindexState.IDLE),
+                shooter.setStateCommand(states.shooterState.IDLE)
+
             )
             );
 

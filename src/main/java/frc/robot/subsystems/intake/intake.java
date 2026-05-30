@@ -53,21 +53,23 @@ public class intake extends SubsystemBase {
 
     var limitConf = new CurrentLimitsConfigs();
 
-    limitConf.StatorCurrentLimit = 50;
-    limitConf.StatorCurrentLimitEnable = true;
+    limitConf.SupplyCurrentLimit = 0;
+    limitConf.SupplyCurrentLowerLimit = 30;
+    limitConf.SupplyCurrentLowerTime = 0.5;
+    limitConf.SupplyCurrentLimitEnable = true;
 
     var motionMagicConfigs = conf.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 30;
-    motionMagicConfigs.MotionMagicAcceleration = 30;
-    motionMagicConfigs.MotionMagicJerk = 30;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 0; //40
+    motionMagicConfigs.MotionMagicAcceleration = 0; // 40
+    motionMagicConfigs.MotionMagicJerk = 0; //40
 
     Slot0Configs slot0 = conf.Slot0;
-    slot0.kV = 4;
-    slot0.kA = 0.1;
-    slot0.kP = 5;
+    slot0.kV = 0; //4
+    slot0.kA = 0; //.1
+    slot0.kP = 0; //5
     slot0.kI = 0;
     slot0.kD = 0;
-    slot0.kS = 1;
+    slot0.kS = 0; //1
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
       StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
