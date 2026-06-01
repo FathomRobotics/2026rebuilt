@@ -26,7 +26,8 @@ import frc.robot.subsystems.states.intakeState;
 
 public class intake extends SubsystemBase {
 
-  private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, CANBus.roboRIO());
+  private TalonFX intakeExtendMotor1 = new TalonFX(canIDs.intakeExtend1CANID, CANBus.roboRIO());
+  private TalonFX intakeExtendMotor2 = new TalonFX(canIDs.intakeExtend2CANID, CANBus.roboRIO());
   private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
 
   private double maxExtension = 15;
@@ -45,7 +46,8 @@ public class intake extends SubsystemBase {
     TalonFXConfiguration conf = new TalonFXConfiguration();
     MotorOutputConfigs motorConf = new MotorOutputConfigs();
 
-    intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
+    intakeExtendMotor1.setNeutralMode(NeutralModeValue.Brake);
+    intakeExtendMotor2.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
 
     motorConf.withDutyCycleNeutralDeadband(1);
@@ -74,10 +76,11 @@ public class intake extends SubsystemBase {
       StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
 
       for (int i = 0; i < 5; ++i) {
-        status = intakeExtendMotor.getConfigurator().apply(conf);
+        status = intakeExtendMotor1.getConfigurator().apply(conf);
         status2 = intakeMotor.getConfigurator().apply(conf);
-        status3 = intakeExtendMotor.getConfigurator().apply(motorConf);
-        intakeExtendMotor.getConfigurator().apply(limitConf);
+        status3 = intakeExtendMotor2.getConfigurator().apply(motorConf);
+        intakeExtendMotor1.getConfigurator().apply(limitConf);
+        intakeExtendMotor2.getConfigurator().apply(limitConf);
         if (status.isOK() && status2.isOK() && status3.isOK()) break;
       }
       if (!status.isOK()) {
@@ -87,7 +90,7 @@ public class intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    intakeExtendMotor.setControl(motionControl.withPosition(targetPose).withSlot(0));
+    intakeExtendMotor1.setControl(motionControl.withPosition(targetPose).withSlot(0));
   }
 
   public void goToPose(double newPosition) {
@@ -95,19 +98,25 @@ public class intake extends SubsystemBase {
     this.targetPose = newPosition;
   }
 
-  public boolean getAtPose(){
-    return Math.abs(this.intakeExtendMotor.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
+  public boolean getAtPose1(){
+    return Math.abs(this.intakeExtendMotor1.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
   }
-  public double getPostition() {
-    return intakeExtendMotor.getPosition().getValueAsDouble();
+  public boolean getAtPose2(){
+    return Math.abs(this.intakeExtendMotor2.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
   }
-
+  public double getPostition1() {
+    return intakeExtendMotor1.getPosition().getValueAsDouble();
+  }
+  public double getPostition2() {
+    return intakeExtendMotor2.getPosition().getValueAsDouble();
+  }
   public void setSpeed(double speed) {
     intakeMotor.set(speed);
   }
 
   public void setExtensionMotorSpeed(double speed) {
-    intakeExtendMotor.set(speed);
+    intakeExtendMotor1.set(speed);
+    intakeExtendMotor2.set(speed);
   }
 
   public void setIntakeMotorSpeed(double speed) {
