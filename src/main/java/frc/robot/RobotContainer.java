@@ -79,9 +79,9 @@ public class RobotContainer {
 
         joystick.cross().whileTrue(
             Commands.sequence(
-                this.intake.setExtensionMotorSpeedCommand(() -> 0.35),
+                this.intake.setExtensionMotorSpeedCommand1(() -> 0.35),
                 Commands.waitSeconds(0.1),
-                this.intake.setExtensionMotorSpeedCommand(() -> -0.35),
+                this.intake.setExtensionMotorSpeedCommand1(() -> -0.35),
                 this.intake.setStateCommand(states.intakeState.AGITATE)
                 // this.spindexer.setStateCommand(states.spindexState.RUNNING),
                 // this.shooter.setStateCommand(states.shooterState.SHOOTING)
@@ -127,7 +127,7 @@ public class RobotContainer {
                 this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
                 this.intake.setStateCommand(states.intakeState.RETRACTING)
             )
-        );        
+        );  
  
         // joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.square().whileTrue(drivetrain.applyRequest(() ->

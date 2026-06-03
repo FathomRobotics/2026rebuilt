@@ -13,8 +13,11 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,15 +30,17 @@ import frc.robot.subsystems.states.intakeState;
 public class intake extends SubsystemBase {
 
   private TalonFX intakeExtendMotor1 = new TalonFX(canIDs.intakeExtend1CANID, CANBus.roboRIO());
-  private TalonFX intakeExtendMotor2 = new TalonFX(canIDs.intakeExtend2CANID, CANBus.roboRIO());
+  private TalonFX intakeExtendMotor2 = new TalonFX(21, CANBus.roboRIO());
   private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
 
   private double maxExtension = 15;
   private double rotationsPerSec = maxExtension / 30;
 
-  private double targetPose = 0;
+  private double targetPose1 = 0;
   private final MotionMagicVoltage motionControl = new MotionMagicVoltage(0);
 
+
+  // private final Follower follow = new Follower(canIDs.intakeExtend1CANID, false);
   private DoubleSupplier ds;
 
   public intakeState state = states.intakeState.IDLE;
@@ -74,14 +79,16 @@ public class intake extends SubsystemBase {
     StatusCode status = StatusCode.StatusCodeNotInitialized;
       StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
       StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
+      StatusCode status4 = StatusCode.StatusCodeNotInitialized; 
 
       for (int i = 0; i < 5; ++i) {
         status = intakeExtendMotor1.getConfigurator().apply(conf);
         status2 = intakeMotor.getConfigurator().apply(conf);
         status3 = intakeExtendMotor2.getConfigurator().apply(motorConf);
+        status4 = intakeExtendMotor2.getConfigurator().apply(conf);
         intakeExtendMotor1.getConfigurator().apply(limitConf);
         intakeExtendMotor2.getConfigurator().apply(limitConf);
-        if (status.isOK() && status2.isOK() && status3.isOK()) break;
+        if (status.isOK() && status2.isOK() && status3.isOK() && status4.isOK()) break;
       }
       if (!status.isOK()) {
         System.out.println("Could not configure device. Error: " + status.toString());
@@ -90,19 +97,17 @@ public class intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    intakeExtendMotor1.setControl(motionControl.withPosition(targetPose).withSlot(0));
+    intakeExtendMotor1.setControl(motionControl.withPosition(targetPose1).withSlot(0));
+   intakeExtendMotor2.setControl(new Follower(intakeExtendMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
   }
 
   public void goToPose(double newPosition) {
     this.override = false;
-    this.targetPose = newPosition;
+    this.targetPose1 = newPosition;
   }
 
   public boolean getAtPose1(){
-    return Math.abs(this.intakeExtendMotor1.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
-  }
-  public boolean getAtPose2(){
-    return Math.abs(this.intakeExtendMotor2.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
+    return Math.abs(this.intakeExtendMotor1.getPosition().getValueAsDouble() - this.targetPose1) < 0.05;
   }
   public double getPostition1() {
     return intakeExtendMotor1.getPosition().getValueAsDouble();
@@ -114,8 +119,11 @@ public class intake extends SubsystemBase {
     intakeMotor.set(speed);
   }
 
-  public void setExtensionMotorSpeed(double speed) {
+  public void setExtensionMotorSpeed1(double speed) {
     intakeExtendMotor1.set(speed);
+  }
+
+  public void setExtentionMotorSpeed2(double speed) {
     intakeExtendMotor2.set(speed);
   }
 
@@ -145,7 +153,11 @@ public class intake extends SubsystemBase {
     return Commands.run( () -> setSpeed(speed.getAsDouble()));
   }
 
-  public Command setExtensionMotorSpeedCommand(DoubleSupplier speed){
-    return Commands.run( () -> setExtensionMotorSpeed(speed.getAsDouble()));
+  public Command setExtensionMotorSpeedCommand1(DoubleSupplier speed){
+    return Commands.run( () -> setExtensionMotorSpeed1(speed.getAsDouble()));
+  }
+
+  public Command setExtensionMotorSpeedCommand2(DoubleSupplier speed){
+    return Commands.run( () -> setExtentionMotorSpeed2(speed.getAsDouble()));
   }
 }

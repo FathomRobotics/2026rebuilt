@@ -14,7 +14,7 @@ public class states {
         EXTENDING(3), 
         EXTENDED(3), 
         RETRACTING(0),
-        AGITATE(5);
+        AGITATE(2);
         private double intakePose;
 
         intakeState(double intakePose) {
