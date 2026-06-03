@@ -1,8 +1,8 @@
+package frc.robot.subsystems.hood;
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.subsystems.intake;
 
 import java.util.function.DoubleSupplier;
 
@@ -22,12 +22,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.canIDs;
 import frc.robot.subsystems.states;
-import frc.robot.subsystems.states.intakeState;
+import frc.robot.subsystems.states.hoodState;
 
-public class intake extends SubsystemBase {
+public class hood extends SubsystemBase {
 
-  private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, CANBus.roboRIO());
-  private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
+  private TalonFX hoodMotor = new TalonFX(canIDs.shooterHoodCANID, CANBus.roboRIO());
 
   private double maxExtension = 15;
   private double rotationsPerSec = maxExtension / 30;
@@ -37,50 +36,46 @@ public class intake extends SubsystemBase {
 
   private DoubleSupplier ds;
 
-  public intakeState state = states.intakeState.IDLE;
+  public hoodState state = states.hoodState.DOWN;
 
   private boolean override = false;
 
-  public intake() {
+  public hood() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
     MotorOutputConfigs motorConf = new MotorOutputConfigs();
 
-    intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
-    intakeMotor.setNeutralMode(NeutralModeValue.Brake);
+    hoodMotor.setNeutralMode(NeutralModeValue.Brake);
 
     motorConf.withDutyCycleNeutralDeadband(1);
     motorConf.withNeutralMode(NeutralModeValue.Brake);
 
     var limitConf = new CurrentLimitsConfigs();
 
-    limitConf.SupplyCurrentLimit = 0;
-    limitConf.SupplyCurrentLowerLimit = 30;
-    limitConf.SupplyCurrentLowerTime = 0.5;
-    limitConf.SupplyCurrentLimitEnable = true;
+    limitConf.StatorCurrentLimit = 100;
+    limitConf.StatorCurrentLimitEnable = false;
 
     var motionMagicConfigs = conf.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 0; //40
-    motionMagicConfigs.MotionMagicAcceleration = 0; // 40
-    motionMagicConfigs.MotionMagicJerk = 0; //40
+    motionMagicConfigs.MotionMagicCruiseVelocity = 30;
+    motionMagicConfigs.MotionMagicAcceleration = 30;
+    motionMagicConfigs.MotionMagicJerk = 30;
 
     Slot0Configs slot0 = conf.Slot0;
-    slot0.kV = 0; //4
-    slot0.kA = 0; //.1
-    slot0.kP = 0; //5
+    slot0.kV = 4;
+    slot0.kA = 0.1;
+    slot0.kP = 5;
     slot0.kI = 0;
     slot0.kD = 0;
-    slot0.kS = 0; //1
+    slot0.kS = 1;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
       StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
       StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
 
       for (int i = 0; i < 5; ++i) {
-        status = intakeExtendMotor.getConfigurator().apply(conf);
-        status2 = intakeMotor.getConfigurator().apply(conf);
-        status3 = intakeExtendMotor.getConfigurator().apply(motorConf);
-        intakeExtendMotor.getConfigurator().apply(limitConf);
-        if (status.isOK() && status2.isOK() && status3.isOK()) break;
+        status = hoodMotor.getConfigurator().apply(conf);
+        status3 = hoodMotor.getConfigurator().apply(motorConf);
+        hoodMotor.getConfigurator().apply(limitConf);
+        if (status.isOK() && status3.isOK()) break;
       }
       if (!status.isOK()) {
         System.out.println("Could not configure device. Error: " + status.toString());
@@ -89,7 +84,7 @@ public class intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    intakeExtendMotor.setControl(motionControl.withPosition(targetPose).withSlot(0));
+    hoodMotor.setControl(motionControl.withPosition(targetPose).withSlot(0));
   }
 
   public void goToPose(double newPosition) {
@@ -98,24 +93,15 @@ public class intake extends SubsystemBase {
   }
 
   public boolean getAtPose(){
-    return Math.abs(this.intakeExtendMotor.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
+    return Math.abs(this.hoodMotor.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
   }
   public double getPostition() {
-    return intakeExtendMotor.getPosition().getValueAsDouble();
+    return hoodMotor.getPosition().getValueAsDouble();
   }
 
-  public void setSpeed(double speed) {
-    intakeMotor.set(speed);
+  public void setHoodMotorSpeed(double speed) {
+    hoodMotor.set(speed);
   }
-
-  public void setExtensionMotorSpeed(double speed) {
-    intakeExtendMotor.set(speed);
-  }
-
-  public void setIntakeMotorSpeed(double speed) {
-    intakeMotor.set(speed);
-  }
-
   public Command goToPositionCommand(double target){
     return Commands.runOnce( ()-> goToPose(target));
   }
@@ -126,19 +112,15 @@ public class intake extends SubsystemBase {
     this.override = true;
   }
 
-  public void setState(intakeState newState){
+  public void setState(hoodState newState){
     this.state = newState;
   }
     
-  public Command setStateCommand(intakeState newState){
+  public Command setStateCommand(hoodState newState){
     return runOnce( () -> setState(newState));
   }
 
-  public Command setSpeedCommand(DoubleSupplier speed){
-    return Commands.run( () -> setIntakeMotorSpeed(speed.getAsDouble()));
-  }
-
-  public Command setExtensionMotorSpeedCommand(DoubleSupplier speed){
-    return Commands.run( () -> setExtensionMotorSpeed(speed.getAsDouble()));
+  public Command setHoodMotorSpeedCommand(DoubleSupplier speed){
+    return Commands.run( () -> setHoodMotorSpeed(speed.getAsDouble()));
   }
 }

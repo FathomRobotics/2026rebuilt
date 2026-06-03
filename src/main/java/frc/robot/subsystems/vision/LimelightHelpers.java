@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.states.turretspinState;
 import frc.robot.subsystems.vision.LimelightHelpers.LimelightResults;
 import frc.robot.subsystems.vision.LimelightHelpers.PoseEstimate;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -30,6 +32,21 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.ConcurrentHashMap;
 import edu.wpi.first.net.PortForwarder;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.canIDs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.states;
+import frc.robot.subsystems.states.spindexState;
+import frc.robot.subsystems.states.turretspinState;
+import frc.robot.subsystems.vision.Limelight;
 
 /**
  * LimelightHelpers provides static methods and classes for interfacing with Limelight vision cameras in FRC.
@@ -1601,9 +1618,10 @@ public class LimelightHelpers {
     /////
     /////
 
-    public static void setPipelineIndex(String limelightName, int pipelineIndex) {
-        setLimelightNTDouble(limelightName, "pipeline", pipelineIndex);
-    }
+    // public static Command setPipelineIndex(String limelightName, int pipelineIndex) {
+    //     setLimelightNTDouble(limelightName, "pipeline", pipelineIndex);
+    //     return null;
+    // }
 
     
     public static void setPriorityTagID(String limelightName, int ID) {

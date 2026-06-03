@@ -2,18 +2,51 @@ package frc.robot.subsystems;
 
 public class states {
     public enum shooterState {
-        IDLE, SPINNING_UP, READY_TO_SHOOT, SHOOTING
+        IDLE, 
+        SPINNING_UP, 
+        READY_TO_SHOOT, 
+        SHOOTING
     }
 
     public enum intakeState {
-        IDLE, INTAKING, EXTENDING, EXTENDED, RETRACTING
+        IDLE(0), 
+        INTAKING(3.4), 
+        EXTENDING(3.4), 
+        EXTENDED(3.4), 
+        RETRACTING(0),
+        AGITATE(3.4);
+        private double intakePose;
+
+        intakeState(double intakePose){
+            this.intakePose = intakePose;
+        }
+        public double getIntakePose(){
+            return this.intakePose;
+        }
+
     }
 
     public enum spindexState {
-        IDLE, RUNNING
+        IDLE, 
+        RUNNING
     }
 
-    public enum climbState {
-        IDLE, CLIMBING, CLIMBEDL1, CLIMBEDL2, CLIMBEDL3
+    public enum turretspinState {
+        IDLE, 
+        TRACKING
+    }
+    
+    public enum hoodState {
+        DOWN(0), 
+        UP(1.5);
+        private double hoodPose;
+
+        hoodState(double hoodPose){
+            this.hoodPose = hoodPose;
+        }
+        public double getHoodPose(){
+            return this.hoodPose;
+        }
+
     }
 }
