@@ -2,8 +2,7 @@ package frc.robot.subsystems;
 
 public class states {
     public enum shooterState {
-        IDLE, 
-        SPINNING_UP, 
+        IDLE,
         READY_TO_SHOOT, 
         SHOOTING
     }

@@ -11,27 +11,17 @@ import frc.robot.subsystems.canIDs;
 import frc.robot.subsystems.states.shooterState;
 import frc.robot.subsystems.vision.Limelight;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.states;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
-import static edu.wpi.first.units.Units.RPM;
 import static java.lang.Math.*;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.controls.Follower;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 public class shooter extends SubsystemBase {
 
@@ -41,12 +31,6 @@ public class shooter extends SubsystemBase {
   private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
 
   public shooterState state = states.shooterState.IDLE;
-
-  // Control request object for velocity control
-  private final VelocityDutyCycle velocityRequest = new VelocityDutyCycle(0);
-
-  // Falcon 500 has 2048 encoder ticks per revolution
-  private static final double TICKS_PER_REV = 2048.0;
 
   private final InterpolatingDoubleTreeMap m_table = new InterpolatingDoubleTreeMap();
     
@@ -71,9 +55,9 @@ public class shooter extends SubsystemBase {
 
     // Add data points: put(key, value)
     m_table.put(12.0, 26.0); // At -12 TY, 1000 RPS
-    m_table.put(13.0, 27.5); // At 0 meters, 1000 RPS
-    m_table.put(14.0, 29.0); // At 0 meters, 1000 RPS
-    m_table.put(15.0, 30.5); // At 0 meters, 1000 RPS
+    m_table.put(13.0, 27.5); // At -13 TY, 1000 RPS
+    m_table.put(14.0, 29.0); // At -14 TY, 1000 RPS
+    m_table.put(15.0, 30.5); // At -15 TY, 1000 RPS
 
     //SmartDashboard.putNumber("Shooter Shooting Target RPM", 1000.0);
 
@@ -86,9 +70,6 @@ public class shooter extends SubsystemBase {
     switch (state) {
       case IDLE:
         this.setSpeed(0);
-        break;
-      case SPINNING_UP:
-        this.setSpeed(1);
         break;
       case READY_TO_SHOOT:
         this.setSpeed(1);
