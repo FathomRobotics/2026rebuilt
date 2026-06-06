@@ -39,8 +39,6 @@ public class intake extends SubsystemBase {
   private double targetPose1 = 0;
   private final MotionMagicVoltage motionControl = new MotionMagicVoltage(0);
 
-
-  // private final Follower follow = new Follower(canIDs.intakeExtend1CANID, false);
   private DoubleSupplier ds;
 
   public intakeState state = states.intakeState.IDLE;
@@ -55,13 +53,13 @@ public class intake extends SubsystemBase {
     intakeExtendMotor2.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    motorConf.withDutyCycleNeutralDeadband(1);
+    motorConf.withDutyCycleNeutralDeadband(.1);
     motorConf.withNeutralMode(NeutralModeValue.Brake);
 
     var limitConf = new CurrentLimitsConfigs();
 
-    limitConf.StatorCurrentLimit = 100;
-    limitConf.StatorCurrentLimitEnable = false;
+    limitConf.StatorCurrentLimit = 40;
+    limitConf.StatorCurrentLimitEnable = true;
 
     var motionMagicConfigs = conf.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 30;
@@ -97,8 +95,8 @@ public class intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    intakeExtendMotor1.setControl(motionControl.withPosition(targetPose1).withSlot(0));
-   intakeExtendMotor2.setControl(new Follower(intakeExtendMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    intakeExtendMotor2.setControl(motionControl.withPosition(targetPose1).withSlot(0));
+   intakeExtendMotor1.setControl(new Follower(intakeExtendMotor2.getDeviceID(), MotorAlignmentValue.Opposed));
   }
 
   public void goToPose(double newPosition) {
@@ -106,31 +104,25 @@ public class intake extends SubsystemBase {
     this.targetPose1 = newPosition;
   }
 
-  public boolean getAtPose1(){
+  public boolean getAtPose(){
     return Math.abs(this.intakeExtendMotor1.getPosition().getValueAsDouble() - this.targetPose1) < 0.05;
   }
-  public double getPostition1() {
+  public double getPostition() {
     return intakeExtendMotor1.getPosition().getValueAsDouble();
   }
-  public double getPostition2() {
-    return intakeExtendMotor2.getPosition().getValueAsDouble();
-  }
+
   public void setSpeed(double speed) {
     intakeMotor.set(speed);
   }
 
-  public void setExtensionMotorSpeed1(double speed) {
+  public void setExtensionMotorSpeed(double speed) {
     intakeExtendMotor1.set(speed);
   }
 
-  public void setExtentionMotorSpeed2(double speed) {
-    intakeExtendMotor2.set(speed);
-  }
 
   public void setIntakeMotorSpeed(double speed) {
     intakeMotor.set(speed);
   }
-
   public Command goToPositionCommand(double target){
     return Commands.runOnce( ()-> goToPose(target));
   }
@@ -153,11 +145,7 @@ public class intake extends SubsystemBase {
     return Commands.run( () -> setSpeed(speed.getAsDouble()));
   }
 
-  public Command setExtensionMotorSpeedCommand1(DoubleSupplier speed){
-    return Commands.run( () -> setExtensionMotorSpeed1(speed.getAsDouble()));
-  }
-
-  public Command setExtensionMotorSpeedCommand2(DoubleSupplier speed){
-    return Commands.run( () -> setExtentionMotorSpeed2(speed.getAsDouble()));
+  public Command setExtensionMotorSpeedCommand(DoubleSupplier speed){
+    return Commands.run( () -> setExtensionMotorSpeed(speed.getAsDouble()));
   }
 }

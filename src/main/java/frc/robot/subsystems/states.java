@@ -12,7 +12,7 @@ public class states {
         IDLE(0), 
         INTAKING(3), 
         EXTENDING(3), 
-        EXTENDED(3), 
+        EXTENDED(2), 
         RETRACTING(0),
         AGITATE(2);
         private double intakePose;

@@ -79,9 +79,9 @@ public class RobotContainer {
 
         joystick.cross().whileTrue(
             Commands.sequence(
-                this.intake.setExtensionMotorSpeedCommand1(() -> 0.35),
+                this.intake.setExtensionMotorSpeedCommand(() -> 0.35),
                 Commands.waitSeconds(0.1),
-                this.intake.setExtensionMotorSpeedCommand1(() -> -0.35),
+                this.intake.setExtensionMotorSpeedCommand(() -> -0.35),
                 this.intake.setStateCommand(states.intakeState.AGITATE)
                 // this.spindexer.setStateCommand(states.spindexState.RUNNING),
                 // this.shooter.setStateCommand(states.shooterState.SHOOTING)
@@ -107,8 +107,17 @@ public class RobotContainer {
             Commands.sequence(
                 this.intake.setSpeedCommand(() -> 0),
                 this.intake.setStateCommand(states.intakeState.EXTENDED)
-                )
-            );
+            )
+        );
+
+        joystick.R1().whileTrue(
+            Commands.repeatingSequence(
+                this.intake.setStateCommand(states.intakeState.EXTENDED),
+                Commands.waitSeconds(0.1),
+                this.intake.setStateCommand(states.intakeState.AGITATE),
+                Commands.waitSeconds(0.1)
+            )
+        );
 
         joystick.touchpad().onTrue(
             Commands.sequence(
