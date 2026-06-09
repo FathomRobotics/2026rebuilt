@@ -30,7 +30,7 @@ import frc.robot.subsystems.states.intakeState;
 public class intake extends SubsystemBase {
 
   private TalonFX intakeExtendMotor1 = new TalonFX(canIDs.intakeExtend1CANID, CANBus.roboRIO());
-  private TalonFX intakeExtendMotor2 = new TalonFX(21, CANBus.roboRIO());
+  private TalonFX intakeExtendMotor2 = new TalonFX(canIDs.intakeExtend2CANID, CANBus.roboRIO());
   private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
 
   private double maxExtension = 15;
