@@ -44,6 +44,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Voltage", RobotController.getBatteryVoltage());
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 
+    // SmartDashboard.putNumber("Intake Encoder Value", this.intake.intakeEncoder.get());
+
+    SmartDashboard.putNumber("Intake Position", this.intake.getPostition());
+
     SmartDashboard.putNumber(
         "HubTracker/Time Until Shift",
         HubTracker.timeRemainingInCurrentShift().orElse(Seconds.of(0)).in(Seconds));

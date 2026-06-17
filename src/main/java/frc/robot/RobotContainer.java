@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -110,14 +111,13 @@ public class RobotContainer {
             )
         );
 
-        joystick.R1().whileTrue(
-            Commands.repeatingSequence(
-                this.intake.setStateCommand(states.intakeState.EXTENDED),
-                Commands.waitSeconds(0.1),
-                this.intake.setStateCommand(states.intakeState.AGITATE),
-                Commands.waitSeconds(0.1)
-            )
-        );
+        // joystick.R1().onTrue(
+        //     if (this.intake.intakeEncoder.get() > 1) {
+        //        this.intake.setExtensionMotorSpeedCommand(() -> 0.2);
+        //     } else {
+        //         this.intake.setExtensionMotorSpeedCommand(() -> 0);
+        //     }
+        // );
 
         joystick.touchpad().onTrue(
             Commands.sequence(

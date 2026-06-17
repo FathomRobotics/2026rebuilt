@@ -17,9 +17,12 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,7 +39,7 @@ public class intake extends SubsystemBase {
   private double maxExtension = 15;
   private double rotationsPerSec = maxExtension / 30;
 
-  private double targetPose1 = 0;
+  private double targetPose1 = -0.6;
   private final MotionMagicVoltage motionControl = new MotionMagicVoltage(0);
 
   private DoubleSupplier ds;
@@ -45,21 +48,28 @@ public class intake extends SubsystemBase {
 
   private boolean override = false;
 
+  // public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(0, 4.0, 2.0);
+
+
   public intake() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
     MotorOutputConfigs motorConf = new MotorOutputConfigs();
+    MotorOutputConfigs motorConf2 = new MotorOutputConfigs();
 
     intakeExtendMotor1.setNeutralMode(NeutralModeValue.Brake);
-    intakeExtendMotor2.setNeutralMode(NeutralModeValue.Brake);
+    // intakeExtendMotor2.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    motorConf.withDutyCycleNeutralDeadband(.1);
+    motorConf.withDutyCycleNeutralDeadband(0.1);
     motorConf.withNeutralMode(NeutralModeValue.Brake);
+
+    motorConf2.withDutyCycleNeutralDeadband(0.1);
+    motorConf2.withNeutralMode(NeutralModeValue.Brake);
 
     var limitConf = new CurrentLimitsConfigs();
 
     limitConf.StatorCurrentLimit = 40;
-    limitConf.StatorCurrentLimitEnable = true;
+    limitConf.StatorCurrentLimitEnable = false;
 
     var motionMagicConfigs = conf.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 30;
@@ -67,36 +77,42 @@ public class intake extends SubsystemBase {
     motionMagicConfigs.MotionMagicJerk = 30;
 
     Slot0Configs slot0 = conf.Slot0;
+    slot0.kS = 1;
     slot0.kV = 4;
     slot0.kA = 0.1;
-    slot0.kP = 5;
-    slot0.kI = 0;
-    slot0.kD = 0;
-    slot0.kS = 1;
+    slot0.kP = 7;
+    slot0.kI = 1;
+    slot0.kD = 0.01;
 
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-      StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
-      StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
-      StatusCode status4 = StatusCode.StatusCodeNotInitialized; 
+    intakeExtendMotor1.getConfigurator().apply(conf);
+    intakeExtendMotor1.getConfigurator().apply(motorConf);
+    intakeMotor.getConfigurator().apply(conf);
+    intakeExtendMotor2.getConfigurator().apply(motorConf2);
+    // intakeExtendMotor2.getConfigurator().apply(conf);
 
-      for (int i = 0; i < 5; ++i) {
-        status = intakeExtendMotor1.getConfigurator().apply(conf);
-        status2 = intakeMotor.getConfigurator().apply(conf);
-        status3 = intakeExtendMotor2.getConfigurator().apply(motorConf);
-        status4 = intakeExtendMotor2.getConfigurator().apply(conf);
-        intakeExtendMotor1.getConfigurator().apply(limitConf);
-        intakeExtendMotor2.getConfigurator().apply(limitConf);
-        if (status.isOK() && status2.isOK() && status3.isOK() && status4.isOK()) break;
-      }
-      if (!status.isOK()) {
-        System.out.println("Could not configure device. Error: " + status.toString());
-      }
+    // StatusCode status = StatusCode.StatusCodeNotInitialized;
+    //   StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
+    //   StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
+    //   StatusCode status4 = StatusCode.StatusCodeNotInitialized; 
+
+  //     for (int i = 0; i < 5; ++i) {
+  //       status = intakeExtendMotor1.getConfigurator().apply(conf);
+  //       status2 = intakeMotor.getConfigurator().apply(conf);
+  //       status3 = intakeExtendMotor2.getConfigurator().apply(motorConf);
+  //       status4 = intakeExtendMotor2.getConfigurator().apply(conf);
+  //       intakeExtendMotor1.getConfigurator().apply(limitConf);
+  //       intakeExtendMotor2.getConfigurator().apply(limitConf);
+  //       if (status.isOK() && status2.isOK() && status3.isOK() && status4.isOK()) break;
+  //     }
+  //     if (!status.isOK()) {
+  //       System.out.println("Could not configure device. Error: " + status.toString());
+  //     }
   }
 
   @Override
   public void periodic() {
-    intakeExtendMotor2.setControl(motionControl.withPosition(targetPose1).withSlot(0));
-   intakeExtendMotor1.setControl(new Follower(intakeExtendMotor2.getDeviceID(), MotorAlignmentValue.Opposed));
+    intakeExtendMotor1.setControl(motionControl.withPosition(targetPose1).withSlot(0));
+    intakeExtendMotor2.setControl(new Follower(intakeExtendMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
   }
 
   public void goToPose(double newPosition) {
@@ -105,7 +121,7 @@ public class intake extends SubsystemBase {
   }
 
   public boolean getAtPose(){
-    return Math.abs(this.intakeExtendMotor1.getPosition().getValueAsDouble() - this.targetPose1) < 0.05;
+    return Math.abs(this.intakeExtendMotor1.getPosition().getValueAsDouble() - this.targetPose1) < 0.2;
   }
   public double getPostition() {
     return intakeExtendMotor1.getPosition().getValueAsDouble();
