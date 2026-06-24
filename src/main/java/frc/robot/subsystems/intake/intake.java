@@ -48,7 +48,7 @@ public class intake extends SubsystemBase {
 
   private boolean override = false;
 
-  // public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(0, 4.0, 2.0);
+  // public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(0);
 
 
   public intake() {

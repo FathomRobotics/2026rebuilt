@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -38,6 +39,8 @@ public class RobotContainer {
     public final spindexer spindexer = new spindexer();
     public final intake intake = new intake();
     public final shooter shooter = new shooter();
+
+    // public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(0);
 
     private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
     private static Limelight intakeLL = new Limelight("limelight-intake", 1, 0, 0, 0, false);

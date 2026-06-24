@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,6 +26,8 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_robotContainer;
     public final intake intake = new intake();
+
+    public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(0);
 
     /* log and replay timestamp and joystick data */
     private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
@@ -44,7 +47,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Voltage", RobotController.getBatteryVoltage());
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 
-    // SmartDashboard.putNumber("Intake Encoder Value", this.intake.intakeEncoder.get());
+    SmartDashboard.putNumber("Intake Encoder Value", intakeEncoder.get());
+    
+    SmartDashboard.putBoolean("Encoder is connected", intakeEncoder.isConnected());
 
     SmartDashboard.putNumber("Intake Position", this.intake.getPostition());
 
