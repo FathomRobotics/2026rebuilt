@@ -54,6 +54,9 @@ public class shooter extends SubsystemBase {
 
 
     // Add data points: put(key, value)
+    m_table.put(-4.5,17.5);
+    m_table.put(2.8,22.5); 
+    m_table.put(4.3,24.5); // There should be at least 1 more value between this and the next line.
     m_table.put(8.3, 26.5); // At -12 TY, 1000 RPS
     m_table.put(9.8, 27.5); // At -13 TY, 1000 RPS
     m_table.put(11.0, 28.5); // At -14 TY, 1000 RPS
