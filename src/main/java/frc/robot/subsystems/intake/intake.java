@@ -48,9 +48,6 @@ public class intake extends SubsystemBase {
 
   private boolean override = false;
 
-  // public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(0);
-
-
   public intake() {
     TalonFXConfiguration conf = new TalonFXConfiguration();
     MotorOutputConfigs motorConf = new MotorOutputConfigs();

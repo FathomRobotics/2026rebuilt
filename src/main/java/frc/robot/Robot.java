@@ -27,8 +27,6 @@ public class Robot extends TimedRobot {
     private final RobotContainer m_robotContainer;
     public final intake intake = new intake();
 
-    public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(0);
-
     /* log and replay timestamp and joystick data */
     private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
         .withTimestampReplay()
@@ -47,9 +45,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Voltage", RobotController.getBatteryVoltage());
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 
-    SmartDashboard.putNumber("Intake Encoder Value", intakeEncoder.get());
+    SmartDashboard.putNumber("Intake Encoder Value", this.m_robotContainer.intakeEncoder.get());
     
-    SmartDashboard.putBoolean("Encoder is connected", intakeEncoder.isConnected());
+    SmartDashboard.putBoolean("Encoder is connected", this.m_robotContainer.intakeEncoder.isConnected());
 
     SmartDashboard.putNumber("Intake Position", this.intake.getPostition());
 
