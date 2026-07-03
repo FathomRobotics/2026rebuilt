@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
 
-        this.intake.setState(states.intakeState.IDLE);
+        //this.intake.setState(states.intakeState.IDLE);
 
     }
 

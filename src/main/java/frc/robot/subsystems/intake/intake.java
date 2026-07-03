@@ -54,7 +54,7 @@ public class intake extends SubsystemBase {
     MotorOutputConfigs motorConf2 = new MotorOutputConfigs();
 
     intakeExtendMotor1.setNeutralMode(NeutralModeValue.Brake);
-    // intakeExtendMotor2.setNeutralMode(NeutralModeValue.Brake);
+    intakeExtendMotor2.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
 
     motorConf.withDutyCycleNeutralDeadband(0.1);
@@ -75,11 +75,11 @@ public class intake extends SubsystemBase {
 
     Slot0Configs slot0 = conf.Slot0;
     slot0.kS = 1;
-    slot0.kV = 4;
+    slot0.kV = 4; //4
     slot0.kA = 0.1;
-    slot0.kP = 7;
-    slot0.kI = 1;
-    slot0.kD = 0.01;
+    slot0.kP = 0.4; //7
+    slot0.kI = 0; //1
+    slot0.kD = 0.6; //0.01
 
     intakeExtendMotor1.getConfigurator().apply(conf);
     intakeExtendMotor1.getConfigurator().apply(motorConf);

@@ -104,15 +104,13 @@ public class RobotContainer {
 
         joystick.L1().onTrue(
           Commands.sequence(
-            this.intake.setSpeedCommand(() -> 0.5),
-                this.intake.setStateCommand(states.intakeState.EXTENDED)
+            this.intake.setSpeedCommand(() -> 0.5)
           )
         );
 
-        joystick.L1().onFalse(
+        joystick.R1().onFalse(
             Commands.sequence(
-                this.intake.setSpeedCommand(() -> 0),
-                this.intake.setStateCommand(states.intakeState.EXTENDED)
+                this.intake.setSpeedCommand(() -> 0)
             )
         );
 
