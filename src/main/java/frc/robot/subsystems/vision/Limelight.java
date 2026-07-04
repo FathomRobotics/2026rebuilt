@@ -174,6 +174,18 @@ public class Limelight extends SubsystemBase {
     }
     return 0;
   }
+  /*Yes so this thing might do something? or not? I'm not sure if it works yet.
+   Replace certain values to their actual values (in meters) once I measure them. */
+  public double getDistanceFromGoal(double cameraAngle) {
+    //25 is from the mounting angle (vertical angle).
+    double angleToGoal = (cameraAngle + 25);
+    //Convert the degree to radians.
+    angleToGoal = angleToGoal * (Math.PI/180.0);
+    // Values in order: Goal height, limelight height (lens), angle of lens in radians
+    //double distanceInMeters = (goalHeightMeters - hubHeightMeters)/Math.tan(angleToGoal);
+    //return distanceInMeters;
+    return 0;
+  }
 
   public double getDistanceToHub() {
     return getDistanceToTag(hubHeightMeters);
