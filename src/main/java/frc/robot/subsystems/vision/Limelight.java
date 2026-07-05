@@ -26,6 +26,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight extends SubsystemBase {
 
@@ -174,16 +175,17 @@ public class Limelight extends SubsystemBase {
     }
     return 0;
   }
-  /*Yes so this thing might do something? or not? I'm not sure if it works yet.
-   Replace certain values to their actual values (in meters) once I measure them. */
-  public double getDistanceFromGoal(double cameraAngle) {
-    //25 is from the mounting angle (vertical angle).
-    double angleToGoal = (cameraAngle + 25);
+
+  public double getDistanceFromTower() {
+    if (hasValidTarget()){
+    //25 is from the mounting angle.
     //Convert the degree to radians.
-    angleToGoal = angleToGoal * (Math.PI/180.0);
-    // Values in order: Goal height, limelight height (lens), angle of lens in radians
-    //double distanceInMeters = (goalHeightMeters - hubHeightMeters)/Math.tan(angleToGoal);
-    //return distanceInMeters;
+    double angleInRadian = (25 + ty) * (Math.PI/180.0);
+    // Tower height is the distance from base of tower to april tag area, and camera height is from floor to limelight lens.
+    // Result is negative to ensure that the distance is positive, not negative
+    double distance = -((towerHeightMeters - cameraHeightMeters) / Math.tan(angleInRadian));
+    return distance;
+    }
     return 0;
   }
 
@@ -245,6 +247,7 @@ public class Limelight extends SubsystemBase {
     ty = LimelightHelpers.getTY(cameraName);
     RawFiducial[] allTags = LimelightHelpers.getRawFiducials(cameraName);
     int numValidTags = 0;
+    SmartDashboard.putNumber("Distance from tower", getDistanceFromTower());
     for (LimelightHelpers.RawFiducial t : allTags) {
       if (t.distToCamera < 4.0) {
         numValidTags ++;
