@@ -9,11 +9,13 @@ public class states {
 
     public enum intakeState {
         IDLE(0), 
-        INTAKING(3.4), 
-        EXTENDING(3.4), 
-        EXTENDED(3.4), 
+        INTAKING(0.58), 
+        EXTENDING(0.58), 
+        EXTENDED(0.58), 
+        //0.344
         RETRACTING(0),
-        AGITATE(3.4);
+        //0.445
+        AGITATE(0.58);
         private double intakePose;
 
         intakeState(double intakePose){

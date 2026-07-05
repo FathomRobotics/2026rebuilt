@@ -8,98 +8,83 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.canIDs;
 import frc.robot.subsystems.states;
 import frc.robot.subsystems.states.intakeState;
+import frc.robot.subsystems.Encoder.ThroughBoreEncoder;
+
 
 public class intake extends SubsystemBase {
 
+  //Cool Motor Stuff
   private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, CANBus.roboRIO());
   private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
 
-  private double maxExtension = 15;
-  private double rotationsPerSec = maxExtension / 30;
+  //Endoder defining
+  public ThroughBoreEncoder BORRIS = new ThroughBoreEncoder(0);
+  private double extensionSetpoint = states.intakeState.RETRACTING.getIntakePose(); 
 
-  private double targetPose = 0;
-  private final MotionMagicVoltage motionControl = new MotionMagicVoltage(0);
+  //PID
+  private static final double kP = 4; //7
+  private static final double kI = 0;
+  private static final double kD = 0; //0.5
+  private final PIDController intakePID = new PIDController(kP, kI, kD);
+  
+
 
   private DoubleSupplier ds;
 
-  public intakeState state = states.intakeState.IDLE;
+  public intakeState state = intakeState.RETRACTING;
 
   private boolean override = false;
 
   public intake() {
-    TalonFXConfiguration conf = new TalonFXConfiguration();
-    MotorOutputConfigs motorConf = new MotorOutputConfigs();
-
+    BORRIS.doReset();
+    intakePID.enableContinuousInput(0, 360);
     intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
-
-    motorConf.withDutyCycleNeutralDeadband(1);
-    motorConf.withNeutralMode(NeutralModeValue.Brake);
-
-    var limitConf = new CurrentLimitsConfigs();
-
-    limitConf.SupplyCurrentLimit = 0;
-    limitConf.SupplyCurrentLowerLimit = 30;
-    limitConf.SupplyCurrentLowerTime = 0.5;
-    limitConf.SupplyCurrentLimitEnable = true;
-
-    var motionMagicConfigs = conf.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 0; //40
-    motionMagicConfigs.MotionMagicAcceleration = 0; // 40
-    motionMagicConfigs.MotionMagicJerk = 0; //40
-
-    Slot0Configs slot0 = conf.Slot0;
-    slot0.kV = 0; //4
-    slot0.kA = 0; //.1
-    slot0.kP = 0; //5
-    slot0.kI = 0;
-    slot0.kD = 0;
-    slot0.kS = 0; //1
-
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-      StatusCode status2 = StatusCode.StatusCodeNotInitialized; 
-      StatusCode status3 = StatusCode.StatusCodeNotInitialized; 
-
-      for (int i = 0; i < 5; ++i) {
-        status = intakeExtendMotor.getConfigurator().apply(conf);
-        status2 = intakeMotor.getConfigurator().apply(conf);
-        status3 = intakeExtendMotor.getConfigurator().apply(motorConf);
-        intakeExtendMotor.getConfigurator().apply(limitConf);
-        if (status.isOK() && status2.isOK() && status3.isOK()) break;
-      }
-      if (!status.isOK()) {
-        System.out.println("Could not configure device. Error: " + status.toString());
-      }
+    
   }
 
-  @Override
   public void periodic() {
-    intakeExtendMotor.setControl(motionControl.withPosition(targetPose).withSlot(0));
+        SmartDashboard.putNumber("BORRIS Encoder value", BORRIS.getDistance());
+        SmartDashboard.putNumber("Target Value", extensionSetpoint);
+        double output = intakePID.calculate(BORRIS.getDistance(), extensionSetpoint);
+
+        // Clamp output
+        //output = Math.max(-2, Math.min(2, output));
+
+        //if(state == intakeState.RETRACTING){
+        //intakeExtendMotor.set(output);
+        SmartDashboard.putNumber("Output to Extend", output);
+        //} else if(state == intakeState.EXTENDING){
+        intakeExtendMotor.set(-output);
+        //SmartDashboard.putNumber("Output to Extend", -output);
+        //}
+        
+
   }
 
-  public void goToPose(double newPosition) {
-    this.override = false;
-    this.targetPose = newPosition;
+  public void setExtensionSetpoint(double extensionSetpoint) {
+ 
+        this.extensionSetpoint = extensionSetpoint;
+    
   }
 
-  public boolean getAtPose(){
-    return Math.abs(this.intakeExtendMotor.getPosition().getValueAsDouble() - this.targetPose) < 0.05;
-  }
+  public Command extendToCommand(double state) {
+        intakePID.setTolerance(0.1);
+        return runOnce(() -> setExtensionSetpoint(state));
+    }
+
   public double getPostition() {
     return intakeExtendMotor.getPosition().getValueAsDouble();
   }
@@ -114,10 +99,6 @@ public class intake extends SubsystemBase {
 
   public void setIntakeMotorSpeed(double speed) {
     intakeMotor.set(speed);
-  }
-
-  public Command goToPositionCommand(double target){
-    return Commands.runOnce( ()-> goToPose(target));
   }
 
 
