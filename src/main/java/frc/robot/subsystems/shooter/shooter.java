@@ -21,7 +21,10 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import static java.lang.Math.*;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class shooter extends SubsystemBase {
 
@@ -94,6 +97,14 @@ public class shooter extends SubsystemBase {
         break;
         
     }
+        boolean hasTarget = shooterLL.hasValidTarget();
+    SmartDashboard.putBoolean("Has Target", hasTarget);
+    Logger.recordOutput("Has Target", hasTarget);
+
+    double ty = abs(shooterLL.getTY());
+    Double motorRPS = m_table.get(ty);
+    SmartDashboard.putNumber("Shooter Speed", motorRPS);
+    Logger.recordOutput("Shooter Speed", motorRPS);
   }
 
   public void setSpeed(double speed) {

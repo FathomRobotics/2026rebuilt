@@ -6,6 +6,8 @@ package frc.robot.subsystems.intake;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -60,12 +62,16 @@ public class intake extends SubsystemBase {
         SmartDashboard.putNumber("Target Value", extensionSetpoint);
         double output = intakePID.calculate(BORRIS.getDistance(), extensionSetpoint);
 
+        Logger.recordOutput("BORRIS Encoder value", BORRIS.getDistance());
+        Logger.recordOutput("Target Value", extensionSetpoint);
+
         // Clamp output
         //output = Math.max(-2, Math.min(2, output));
 
         //if(state == intakeState.RETRACTING){
         //intakeExtendMotor.set(output);
         SmartDashboard.putNumber("Output to Extend", output);
+        Logger.recordOutput("Output to Extend", output);
         //} else if(state == intakeState.EXTENDING){
         intakeExtendMotor.set(-output);
         //SmartDashboard.putNumber("Output to Extend", -output);

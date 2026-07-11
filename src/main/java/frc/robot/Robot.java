@@ -2,23 +2,34 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
 import static edu.wpi.first.units.Units.Seconds;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.states;
+import frc.robot.subsystems.intake.intake;
 import frc.robot.util.HubTracker;
 
-public class Robot extends TimedRobot {
+
+public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
 
     private final RobotContainer m_robotContainer;
@@ -30,6 +41,26 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
+
+        switch (Constants.currentMode) {
+            case REAL:
+                Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs"));
+                Logger.addDataReceiver(new NT4Publisher());
+                break;
+            
+            case SIM:
+                Logger.addDataReceiver(new NT4Publisher());
+                break;
+            
+            case REPLAY:
+                setUseTiming(false);
+                String logPath = LogFileUtil.findReplayLog();
+                Logger.setReplaySource(new WPILOGReader(logPath));
+                Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+                break;
+        }
+
+        Logger.start();
     }
 
     @Override
@@ -54,6 +85,10 @@ public class Robot extends TimedRobot {
 
     double codeRuntime = (Timer.getFPGATimestamp() - startTime) * 1000.0;
     SmartDashboard.putNumber("Code Runtime (ms)", codeRuntime);
+
+    Logger.recordOutput("Voltage", RobotController.getBatteryVoltage());
+    Logger.recordOutput("Match Time", DriverStation.getMatchTime());
+    Logger.recordOutput("Code Runtime (ms)", codeRuntime);
     }
 
     @Override
