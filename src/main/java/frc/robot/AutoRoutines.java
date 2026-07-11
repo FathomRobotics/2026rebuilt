@@ -139,8 +139,9 @@ public class AutoRoutines {
 
             CenterAutoPickUp1.done().onTrue(
             Commands.parallel(
-                //intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
-                intake.setSpeedCommand(() -> 0.7),
+                this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.EXTENDING),
+                this.intake.setSpeedCommand(0.5),
                 CenterAutoPickUp2.cmd()
 
             )
@@ -149,7 +150,7 @@ public class AutoRoutines {
             CenterAutoPickUp2.done().onTrue(
             Commands.sequence(
                 new WaitCommand(0.5),
-                intake.setSpeedCommand(() -> 0.7),
+                this.intake.setSpeedCommand(0.5),
                 CenterAutoShootSecond.cmd(),
                 shooter.setStateCommand(states.shooterState.SHOOTING),
                 new WaitCommand(2.5),
@@ -157,7 +158,8 @@ public class AutoRoutines {
                 new WaitCommand(1),
                 spindexer.setStateCommand(states.spindexState.RUNNING),
                 new WaitCommand(1),
-                //intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
+                this.intake.extendToCommand(states.intakeState.RETRACTING.getIntakePose()),
+                this.intake.setStateCommand(states.intakeState.RETRACTING),
                 new WaitCommand(2),
                 turret.setStateCommand(states.turretspinState.IDLE),
                 spindexer.setStateCommand(states.spindexState.IDLE),

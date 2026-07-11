@@ -15,7 +15,7 @@ public class states {
         //0.344
         RETRACTING(0),
         //0.445
-        AGITATE(0.58);
+        AGITATE(0.05);
         private double intakePose;
 
         intakeState(double intakePose){

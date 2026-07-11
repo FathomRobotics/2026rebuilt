@@ -34,7 +34,7 @@ public class intake extends SubsystemBase {
   private double extensionSetpoint = states.intakeState.RETRACTING.getIntakePose(); 
 
   //PID
-  private static final double kP = 4; //7
+  private static final double kP = 2.5; //7
   private static final double kI = 0;
   private static final double kD = 0; //0.5
   private final PIDController intakePID = new PIDController(kP, kI, kD);
@@ -115,11 +115,11 @@ public class intake extends SubsystemBase {
     return runOnce( () -> setState(newState));
   }
 
-  public Command setSpeedCommand(DoubleSupplier speed){
-    return Commands.run( () -> setIntakeMotorSpeed(speed.getAsDouble()));
+  public Command setSpeedCommand(double speed){
+    return Commands.run( () -> setIntakeMotorSpeed(speed));
   }
 
-  public Command setExtensionMotorSpeedCommand(DoubleSupplier speed){
-    return Commands.run( () -> setExtensionMotorSpeed(speed.getAsDouble()));
+  public Command setExtensionMotorSpeedCommand(double speed){
+    return Commands.run( () -> setExtensionMotorSpeed(speed));
   }
 }

@@ -15,12 +15,14 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 
 import frc.Generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.spindexer.spindexer;
+import frc.robot.subsystems.turret.turret;
 import frc.robot.subsystems.intake.intake;
 import frc.robot.subsystems.shooter.shooter;
 import frc.robot.subsystems.vision.Limelight;
@@ -40,6 +42,7 @@ public class RobotContainer {
     public final spindexer spindexer = new spindexer();
     public final intake intake = new intake();
     public final shooter shooter = new shooter();
+    public final turret turret = new turret();
 
 
     private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
@@ -80,18 +83,60 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
+        
+        joystick.cross().onTrue(
+            Commands.sequence(
+                shooter.setStateCommand(states.shooterState.SHOOTING),
+                turret.setStateCommand(states.turretspinState.TRACKING)
+           )
+        );
+        joystick.L1().onTrue(
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.IDLE),
+                shooter.setStateCommand(states.shooterState.IDLE),
+                turret.setStateCommand(states.turretspinState.IDLE)
 
-        joystick.triangle().onTrue(
+            )
+        );
+        joystick.R1().onTrue(
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.RUNNING)
+
+            )
+        );
+
+        joystick2.triangle().onTrue(
             this.intake.extendToCommand(states.intakeState.RETRACTING.getIntakePose())
         );
-        joystick.triangle().onTrue(
+        joystick2.triangle().onTrue(
             this.intake.setStateCommand(states.intakeState.RETRACTING)
         );
-        joystick.square().onTrue(
+        joystick2.square().onTrue(
             this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose())
         );
-        joystick.square().onTrue(
+        joystick2.square().onTrue(
             this.intake.setStateCommand(states.intakeState.EXTENDING)
+        );
+        joystick2.cross().whileTrue(
+            this.intake.setSpeedCommand(0.5)
+        );
+        joystick2.cross().whileFalse(
+            this.intake.setSpeedCommand(0)
+        );
+        joystick2.circle().onTrue(
+            Commands.sequence(
+            this.intake.extendToCommand(states.intakeState.AGITATE.getIntakePose()),
+            this.intake.setStateCommand(states.intakeState.AGITATE),
+            new WaitCommand(0.7),
+            this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+            this.intake.setStateCommand(states.intakeState.EXTENDING),
+            new WaitCommand(0.7),
+            this.intake.extendToCommand(states.intakeState.AGITATE.getIntakePose()),
+            this.intake.setStateCommand(states.intakeState.AGITATE),
+            new WaitCommand(0.7),
+            this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+            this.intake.setStateCommand(states.intakeState.EXTENDING)
+            )
         );
         
 
