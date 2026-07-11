@@ -123,6 +123,11 @@ public class RobotContainer {
         joystick2.cross().whileFalse(
             this.intake.setSpeedCommand(0)
         );
+
+        joystick2.touchpad().whileTrue(
+            this.intake.setSpeedCommand(-0.5)
+        );
+
         joystick2.circle().onTrue(
             Commands.sequence(
             this.intake.extendToCommand(states.intakeState.AGITATE.getIntakePose()),
