@@ -105,51 +105,51 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
         
-        joystick.cross().onTrue(
+        joystick.square().onTrue(
             Commands.sequence(
-                shooter.setStateCommand(states.shooterState.SHOOTING),
                 turret.setStateCommand(states.turretspinState.TRACKING)
-           )
+            )
         );
-        joystick.L1().onTrue(
+        joystick.circle().onTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.IDLE),
-                shooter.setStateCommand(states.shooterState.IDLE),
                 turret.setStateCommand(states.turretspinState.IDLE)
-
             )
         );
-        joystick.R1().onTrue(
+
+        joystick.L2().onTrue(
             Commands.sequence(
-                spindexer.setStateCommand(states.spindexState.RUNNING)
+                turret.setStateCommand(states.turretspinState.TRACKING),
+                shooter.setStateCommand(states.shooterState.SHOOTING)
+            )
+        );
+        joystick.R2().onTrue(
+            Commands.sequence(
+                shooter.setStateCommand(states.shooterState.IDLE)
+            )
+        );
 
+        joystick2.cross().onTrue(
+            Commands.sequence(
+                intake.extendToCommand(states.intakeState.RETRACTING.getIntakePose())
             )
         );
 
         joystick2.triangle().onTrue(
-            this.intake.extendToCommand(states.intakeState.RETRACTING.getIntakePose())
+            Commands.sequence(
+                intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose())
+            )
         );
-        joystick2.triangle().onTrue(
-            this.intake.setStateCommand(states.intakeState.RETRACTING)
-        );
-        joystick2.square().onTrue(
-            this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose())
-        );
-        joystick2.square().onTrue(
-            this.intake.setStateCommand(states.intakeState.EXTENDING)
-        );
-        joystick2.cross().whileTrue(
-            this.intake.setSpeedCommand(0.5)
-        );
-        joystick2.cross().whileFalse(
+
+        joystick2.circle().whileTrue(
+            this.intake.setSpeedCommand(-0.5)
+        );  
+        joystick2.R1().onTrue(
             this.intake.setSpeedCommand(0)
         );
-
-        joystick2.touchpad().whileTrue(
-            this.intake.setSpeedCommand(-0.5)
+        joystick.L1().onTrue(
+            this.intake.setSpeedCommand(0.5)
         );
-
-        joystick2.circle().onTrue(
+        joystick2.square().whileTrue(
             Commands.sequence(
             this.intake.extendToCommand(states.intakeState.AGITATE.getIntakePose()),
             this.intake.setStateCommand(states.intakeState.AGITATE),
@@ -164,6 +164,91 @@ public class RobotContainer {
             this.intake.setStateCommand(states.intakeState.EXTENDING)
             )
         );
+        
+        joystick2.R2().onTrue(
+            Commands.sequence(
+                shooter.setStateCommand(states.shooterState.SHOOTING)
+            )
+        );
+        joystick2.L2().onTrue(
+            Commands.sequence(
+                shooter.setStateCommand(states.shooterState.IDLE)
+            )
+        );
+
+        joystick2.L3().onTrue(
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.IDLE)
+            )
+        );
+        joystick2.R3().onTrue(
+            Commands.sequence(
+                spindexer.setStateCommand(states.spindexState.RUNNING)
+            )
+        );
+
+//OLD BINDS
+
+
+        // joystick.cross().onTrue(
+        //     Commands.sequence(
+        //         shooter.setStateCommand(states.shooterState.SHOOTING),
+        //         turret.setStateCommand(states.turretspinState.TRACKING)
+        //    )
+        // );
+        // joystick.L1().onTrue(
+        //     Commands.sequence(
+        //         spindexer.setStateCommand(states.spindexState.IDLE),
+        //         shooter.setStateCommand(states.shooterState.IDLE),
+        //         turret.setStateCommand(states.turretspinState.IDLE)
+
+        //     )
+        // );
+        // joystick.R1().onTrue(
+        //     Commands.sequence(
+        //         spindexer.setStateCommand(states.spindexState.RUNNING)
+
+        //     )
+        // );
+
+        // joystick2.triangle().onTrue(
+        //     this.intake.extendToCommand(states.intakeState.RETRACTING.getIntakePose())
+        // );
+        // joystick2.triangle().onTrue(
+        //     this.intake.setStateCommand(states.intakeState.RETRACTING)
+        // );
+        // joystick2.square().onTrue(
+        //     this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose())
+        // );
+        // joystick2.square().onTrue(
+        //     this.intake.setStateCommand(states.intakeState.EXTENDING)
+        // );
+        // joystick2.cross().whileTrue(
+        //     this.intake.setSpeedCommand(0.5)
+        // );
+        // joystick2.cross().whileFalse(
+        //     this.intake.setSpeedCommand(0)
+        // );
+
+        // joystick2.touchpad().whileTrue(
+        //     this.intake.setSpeedCommand(-0.5)
+        // );
+
+        // joystick2.circle().onTrue(
+        //     Commands.sequence(
+        //     this.intake.extendToCommand(states.intakeState.AGITATE.getIntakePose()),
+        //     this.intake.setStateCommand(states.intakeState.AGITATE),
+        //     new WaitCommand(0.7),
+        //     this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+        //     this.intake.setStateCommand(states.intakeState.EXTENDING),
+        //     new WaitCommand(0.7),
+        //     this.intake.extendToCommand(states.intakeState.AGITATE.getIntakePose()),
+        //     this.intake.setStateCommand(states.intakeState.AGITATE),
+        //     new WaitCommand(0.7),
+        //     this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+        //     this.intake.setStateCommand(states.intakeState.EXTENDING)
+        //     )
+        // );
         
 
         // joystick.cross().onFalse(
@@ -187,7 +272,7 @@ public class RobotContainer {
         // ));
  
         // Reset the field-centric heading on left bumper press.
-        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric(drivetrain .getPigeon2().getRotation2d())));
+        joystick.touchpad().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric(drivetrain .getPigeon2().getRotation2d())));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
