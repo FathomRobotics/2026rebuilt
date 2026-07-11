@@ -41,8 +41,6 @@ public class RobotContainer {
     public final intake intake = new intake();
     public final shooter shooter = new shooter();
 
-    DigitalInput input = new DigitalInput(0);
-    public final DutyCycleEncoder intakeEncoder = new DutyCycleEncoder(input);
 
     private static Limelight shooterLL = new Limelight("limelight-shooter", 1, 0, 0, 0, false);
     private static Limelight intakeLL = new Limelight("limelight-intake", 1, 0, 0, 0, false);
@@ -83,17 +81,19 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.cross().whileTrue(
-            Commands.sequence(
-                this.intake.setExtensionMotorSpeedCommand(() -> 0.35),
-                Commands.waitSeconds(0.1),
-                this.intake.setExtensionMotorSpeedCommand(() -> -0.35),
-                this.intake.setStateCommand(states.intakeState.AGITATE)
-                // this.spindexer.setStateCommand(states.spindexState.RUNNING),
-                // this.shooter.setStateCommand(states.shooterState.SHOOTING)
-                // this.intake.setSpeedCommand(() -> 0.5)
-            )
+        joystick.triangle().onTrue(
+            this.intake.extendToCommand(states.intakeState.RETRACTING.getIntakePose())
         );
+        joystick.triangle().onTrue(
+            this.intake.setStateCommand(states.intakeState.RETRACTING)
+        );
+        joystick.square().onTrue(
+            this.intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose())
+        );
+        joystick.square().onTrue(
+            this.intake.setStateCommand(states.intakeState.EXTENDING)
+        );
+        
 
         // joystick.cross().onFalse(
         //     Commands.sequence(
@@ -102,18 +102,6 @@ public class RobotContainer {
         //     )
         // );
 
-        joystick.L1().onTrue(
-          Commands.sequence(
-            this.intake.setSpeedCommand(() -> 0.5)
-          )
-        );
-
-        joystick.R1().onFalse(
-            Commands.sequence(
-                this.intake.setSpeedCommand(() -> 0)
-            )
-        );
-
         // joystick.R1().onTrue(
         //     if (this.intake.intakeEncoder.get() > 1) {
         //        this.intake.setExtensionMotorSpeedCommand(() -> 0.2);
@@ -121,25 +109,6 @@ public class RobotContainer {
         //         this.intake.setExtensionMotorSpeedCommand(() -> 0);
         //     }
         // );
-
-        joystick.touchpad().onTrue(
-            Commands.sequence(
-                this.intake.setSpeedCommand(() -> -0.5))
-        );
-        
-        joystick.square().onTrue(
-          Commands.sequence(
-            this.intake.goToPositionCommand(states.intakeState.EXTENDING.getIntakePose()),
-                this.intake.setStateCommand(states.intakeState.EXTENDING)
-          )
-        );
-
-        joystick.triangle().onTrue(
-            Commands.sequence(
-                this.intake.goToPositionCommand(states.intakeState.RETRACTING.getIntakePose()),
-                this.intake.setStateCommand(states.intakeState.RETRACTING)
-            )
-        );  
  
         // joystick.triangle().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.square().whileTrue(drivetrain.applyRequest(() ->

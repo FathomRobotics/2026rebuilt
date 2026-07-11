@@ -21,7 +21,10 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import static java.lang.Math.*;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class shooter extends SubsystemBase {
 
@@ -41,7 +44,7 @@ public class shooter extends SubsystemBase {
     var slot0Configs = new Slot0Configs();
     slot0Configs.kS = 0.2; // Add 0.1 V output to overcome static friction
     slot0Configs.kV = 0.2; // A velocity target of 1 rps results in 0.12 V output
-    slot0Configs.kP = 0.4; // An error of 1 rps results in 0.11 V output
+    slot0Configs.kP = 0.3; // An error of 1 rps results in 0.11 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // no output for error derivative
 
@@ -54,10 +57,13 @@ public class shooter extends SubsystemBase {
 
 
     // Add data points: put(key, value)
-    m_table.put(12.0, 26.0); // At -12 TY, 1000 RPS
-    m_table.put(13.0, 27.5); // At -13 TY, 1000 RPS
-    m_table.put(14.0, 29.0); // At -14 TY, 1000 RPS
-    m_table.put(15.0, 30.5); // At -15 TY, 1000 RPS
+    m_table.put(-4.5,17.5);
+    m_table.put(2.8,22.5); 
+    m_table.put(4.3,24.5); // There should be at least 1 more value between this and the next line.
+    m_table.put(8.3, 26.5); // At -12 TY, 1000 RPS
+    m_table.put(9.8, 27.5); // At -13 TY, 1000 RPS
+    m_table.put(11.0, 28.5); // At -14 TY, 1000 RPS
+    m_table.put(12.5, 29.5); // At -15 TY, 1000 RPS
 
     //SmartDashboard.putNumber("Shooter Shooting Target RPM", 1000.0);
 
@@ -89,8 +95,15 @@ public class shooter extends SubsystemBase {
           shooterflywheelB.setControl(m_request.withVelocity(0).withFeedForward(0.0));
         }
         break;
-        
     }
+    boolean hasTarget = shooterLL.hasValidTarget();
+    SmartDashboard.putBoolean("Has Target", hasTarget);
+    Logger.recordOutput("Has Target", hasTarget);
+
+    double ty = abs(shooterLL.getTY());
+    Double motorRPS = m_table.get(ty);
+    SmartDashboard.putNumber("Shooter Speed", motorRPS);
+    Logger.recordOutput("Shooter Speed", motorRPS);
   }
 
   public void setSpeed(double speed) {
