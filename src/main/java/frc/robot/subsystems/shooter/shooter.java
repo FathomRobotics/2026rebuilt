@@ -98,14 +98,13 @@ public class shooter extends SubsystemBase {
         break;
         
     }
-        boolean hasTarget = shooterLL.hasValidTarget();
+    boolean hasTarget = shooterLL.hasValidTarget();
     SmartDashboard.putBoolean("Has Target", hasTarget);
     Logger.recordOutput("Has Target", hasTarget);
 
     double ty = abs(shooterLL.getTY());
     Double motorRPS = m_table.get(ty);
-    SmartDashboard.putNumber("Shooter Speed", motorRPS);
-    Logger.recordOutput("Shooter Speed", motorRPS);
+    Logger.recordOutput("Shooter Speed", shooterflywheelA.getVelocity().getValue());
   }
 
   public void setSpeed(double speed) {
