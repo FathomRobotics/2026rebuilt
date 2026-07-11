@@ -141,13 +141,19 @@ public class RobotContainer {
         );
 
         joystick2.circle().whileTrue(
-            this.intake.setSpeedCommand(-0.5)
+            Commands.sequence(
+                intake.setSpeedCommand(-0.5)
+            )
         );  
         joystick2.R1().onTrue(
-            this.intake.setSpeedCommand(0)
+            Commands.sequence(
+                intake.setSpeedCommand(0)
+            )
         );
-        joystick.L1().onTrue(
-            this.intake.setSpeedCommand(0.5)
+        joystick2.L1().onTrue(
+            Commands.sequence(
+                intake.setSpeedCommand(0.5)
+            )
         );
         joystick2.square().whileTrue(
             Commands.sequence(
