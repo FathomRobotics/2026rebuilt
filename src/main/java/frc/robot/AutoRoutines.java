@@ -80,11 +80,11 @@ public class AutoRoutines {
             Commands.sequence(
 
             CenterAutoShootFirst.resetOdometry(),
-            Commands.parallel(
+            Commands.sequence(
+                intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+                intake.setStateCommand(states.intakeState.EXTENDING),
+                intake.setSpeedCommand(0.5),
                 CenterAutoShootFirst.cmd()
-                //intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
-                //intake.setStateCommand(states.intakeState.EXTENDING),
-                //intake.setSpeedCommand(0.5)
             )
             )
         );
