@@ -73,7 +73,7 @@ public class RobotContainer {
         autoChooser.addRoutine("Right Auto", autoRoutines::RightAuto);
         autoChooser.addRoutine("Center Auto", autoRoutines::CenterAuto);
         autoChooser.addRoutine("Center Auto V2", autoRoutines::CenterAutoVer2);
-        autoChooser.addRoutine("Left Auto", autoRoutines::LeftAuto);
+        autoChooser.addRoutine("Left Auto", autoRoutines::RightAuto);
 
 
 

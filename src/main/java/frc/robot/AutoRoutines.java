@@ -74,20 +74,31 @@ public class AutoRoutines {
 
         final AutoRoutine routine = m_factory.newRoutine("CenterAuto");
         final AutoTrajectory CenterAutoShootFirst = routine.trajectory("CenterAutoShootFirst");
+        final AutoTrajectory CenterAutoShootSecond = routine.trajectory("CenterAutoShootSecond");
 
         routine.active().onTrue(
             Commands.sequence(
 
             CenterAutoShootFirst.resetOdometry(),
             Commands.parallel(
-                CenterAutoShootFirst.cmd(),
-                    shooter.setStateCommand(states.shooterState.SHOOTING)
+                CenterAutoShootFirst.cmd()
+                //intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+                //intake.setStateCommand(states.intakeState.EXTENDING),
+                //intake.setSpeedCommand(0.5)
             )
             )
         );
 
         CenterAutoShootFirst.done().onTrue(
             Commands.sequence(
+                new WaitCommand(3),
+                CenterAutoShootSecond.cmd()
+            )
+        );
+
+        CenterAutoShootSecond.done().onTrue(
+            Commands.sequence(
+                shooter.setStateCommand(states.shooterState.SHOOTING),
                 new WaitCommand(3),
                 turret.setStateCommand(states.turretspinState.TRACKING),
                 new WaitCommand(1),
