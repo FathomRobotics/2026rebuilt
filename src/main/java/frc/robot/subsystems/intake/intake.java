@@ -10,6 +10,8 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -30,6 +32,7 @@ public class intake extends SubsystemBase {
   //Cool Motor Stuff
   private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, CANBus.roboRIO());
   private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
+  private final MotionMagicVoltage motionControl = new MotionMagicVoltage(0);
 
   //Endoder defining
   public ThroughBoreEncoder BORRIS = new ThroughBoreEncoder(0);
@@ -37,11 +40,9 @@ public class intake extends SubsystemBase {
 
   //PID
   private static final double kP = 2.5; //7
-  private static final double kI = 0;
-  private static final double kD = 0; //0.5
+  private static final double kI = 0.0;
+  private static final double kD = 0.0; //0.5
   private final PIDController intakePID = new PIDController(kP, kI, kD);
-  
-
 
   private DoubleSupplier ds;
 
@@ -51,7 +52,6 @@ public class intake extends SubsystemBase {
 
   public intake() {
     BORRIS.doReset();
-    intakePID.enableContinuousInput(0, 360);
     intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
     

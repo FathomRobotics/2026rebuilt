@@ -80,11 +80,14 @@ public class AutoRoutines {
             Commands.sequence(
 
             CenterAutoShootFirst.resetOdometry(),
-            Commands.sequence(
-                intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
-                intake.setStateCommand(states.intakeState.EXTENDING),
-                intake.setSpeedCommand(0.5),
-                CenterAutoShootFirst.cmd()
+            Commands.parallel(
+                CenterAutoShootFirst.cmd(),
+                Commands.sequence(
+                    new WaitCommand(0.4),
+                    intake.extendToCommand(states.intakeState.EXTENDING.getIntakePose()),
+                    intake.setStateCommand(states.intakeState.EXTENDING),
+                    intake.setSpeedCommand(0.5)
+                )   
             )
             )
         );
@@ -103,7 +106,9 @@ public class AutoRoutines {
                 turret.setStateCommand(states.turretspinState.TRACKING),
                 new WaitCommand(1),
                 spindexer.setStateCommand(states.spindexState.RUNNING),
-                new WaitCommand(2),
+                intake.extendToCommand(states.intakeState.RETRACTING.getIntakePose()),
+                intake.setStateCommand(states.intakeState.RETRACTING),
+                new WaitCommand(5),
                 turret.setStateCommand(states.turretspinState.IDLE),
                 spindexer.setStateCommand(states.spindexState.IDLE),
                 shooter.setStateCommand(states.shooterState.IDLE)

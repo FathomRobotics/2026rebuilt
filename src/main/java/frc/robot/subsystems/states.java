@@ -9,9 +9,9 @@ public class states {
 
     public enum intakeState {
         IDLE(0), 
-        INTAKING(0.58), 
-        EXTENDING(0.58), 
-        EXTENDED(0.58), 
+        INTAKING(0.595), 
+        EXTENDING(0.595), 
+        EXTENDED(0.595), 
         //0.344
         RETRACTING(0),
         //0.445
