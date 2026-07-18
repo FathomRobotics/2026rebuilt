@@ -30,20 +30,21 @@ import frc.robot.subsystems.Encoder.ThroughBoreEncoder;
 public class intake extends SubsystemBase {
 
   //Cool Motor Stuff
-  private TalonFX intakeExtendMotor = new TalonFX(canIDs.intakeExtendCANID, CANBus.roboRIO());
+  private TalonFX intakeExtendMotorA = new TalonFX(canIDs.intakeExtendCANID_A, CANBus.roboRIO());
   private TalonFX intakeMotor = new TalonFX(canIDs.intakeCANID, CANBus.roboRIO());
-  private final MotionMagicVoltage motionControl = new MotionMagicVoltage(0);
+  
 
   //Endoder defining
   public ThroughBoreEncoder BORRIS = new ThroughBoreEncoder(0);
   private double extensionSetpoint = states.intakeState.RETRACTING.getIntakePose(); 
 
+  
   //PID
   private static final double kP = 2.5; //7
   private static final double kI = 0.0;
   private static final double kD = 0.0; //0.5
   private final PIDController intakePID = new PIDController(kP, kI, kD);
-
+  
   private DoubleSupplier ds;
 
   public intakeState state = intakeState.RETRACTING;
@@ -52,7 +53,7 @@ public class intake extends SubsystemBase {
 
   public intake() {
     BORRIS.doReset();
-    intakeExtendMotor.setNeutralMode(NeutralModeValue.Brake);
+    intakeExtendMotorA.setNeutralMode(NeutralModeValue.Brake);
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
     
   }
@@ -73,7 +74,7 @@ public class intake extends SubsystemBase {
         SmartDashboard.putNumber("Output to Extend", output);
         Logger.recordOutput("Output to Extend", output);
         //} else if(state == intakeState.EXTENDING){
-        intakeExtendMotor.set(-output);
+        intakeExtendMotorA.set(-output);
         //SmartDashboard.putNumber("Output to Extend", -output);
         //}
         
@@ -92,7 +93,7 @@ public class intake extends SubsystemBase {
     }
 
   public double getPostition() {
-    return intakeExtendMotor.getPosition().getValueAsDouble();
+    return intakeExtendMotorA.getPosition().getValueAsDouble();
   }
 
   public void setSpeed(double speed) {
@@ -100,7 +101,7 @@ public class intake extends SubsystemBase {
   }
 
   public void setExtensionMotorSpeed(double speed) {
-    intakeExtendMotor.set(speed);
+    intakeExtendMotorA.set(speed);
   }
 
   public void setIntakeMotorSpeed(double speed) {
