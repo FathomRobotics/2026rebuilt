@@ -144,6 +144,9 @@ public class RobotContainer {
         joystick2.cross().whileFalse(
             this.intake.setSpeedCommand(0)
         );
+        joystick2.cross().multiPress(2, 1.0).whileTrue(
+            this.intake.setSpeedCommand(-0.5)
+        );
         joystick2.circle().onTrue(
             Commands.sequence(
             this.intake.extendToCommand(states.intakeState.AGITATE.getIntakePose()),
